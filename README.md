@@ -1,61 +1,133 @@
 # AI Chat Bot
 
-A modern AI chatbot application built with Next.js 16 and Tailwind CSS v4.
+A modern AI chatbot application built with Next.js 15 and powered by Google Gemini AI. Features a clean, responsive interface with dark mode support, real-time chat, message search, and persistent chat history.
 
-## Features
+## ✨ Features
 
-- 💬 Real-time chat interface
-- 🎨 Modern UI design with Tailwind CSS
-- 🌓 Dark mode support
-- 📱 Fully responsive layout
-- ⚡ Built with Next.js 16 App Router
-- 🔤 TypeScript for type safety
+- 🤖 **AI-Powered Chat** - Integrated with Google Gemini 2.0 Flash model
+- 💬 **Real-time Chat Interface** - Smooth, responsive messaging experience
+- 🔍 **Message Search** - Search through chat history with highlighting
+- 💾 **Persistent Storage** - Chat history saved in localStorage
+- 🎨 **Modern UI Design** - Built with Tailwind CSS v4
+- 📱 **Fully Responsive** - Works seamlessly on desktop and mobile
+- ⚡ **Fast Performance** - Built with Next.js 16 App Router
+- 🔤 **Type Safety** - Full TypeScript implementation
+- 🧹 **Clear History** - Easy chat history management
 
-## Getting Started
+## 🚀 Quick Start
 
-First, install the dependencies:
+### Prerequisites
+
+- Node.js 18.x or later
+- yarn, yarn, or pyarn package manager
+- Google Gemini API key
+
+### 1. Clone the Repository
 
 ```bash
-yarn install
+git clone <your-repository-url>
+cd chat-bot
 ```
 
-Then, run the development server:
+### 2. Install Dependencies
 
 ```bash
+# Using yarn
+yarn install
+
+# Using yarn
+yarn install
+
+# Using pyarn
+pyarn install
+```
+
+### 3. Configure Environment Variables
+
+Create a `.env.local` file in the root directory and add your Gemini API key:
+
+```env
+GEMINI_API_KEY=your_gemini_api_key_here
+```
+
+#### How to Get a Gemini API Key
+
+1. Go to [Google AI Studio](https://makersuite.google.com/app/apikey)
+2. Sign in with your Google account
+3. Click "Create API Key"
+4. Copy the generated API key
+5. Add it to your `.env.local` file
+
+> **Important:** Never commit your API key to version control. The `.env.local` file should be added to your `.gitignore`.
+
+### 4. Run the Development Server
+
+```bash
+# Using yarn
+yarn run dev
+
+# Using yarn
 yarn dev
+
+# Using pyarn
+pyarn dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the chatbot in action.
 
-## Project Structure
+## 🛠️ Development
 
+### Available Scripts
+
+```bash
+# Start development server
+yarn run dev
+
+# Build for production
+yarn run build
+
+# Start production server
+yarn run start
+
+# Run linting
+yarn run lint
+
+# Run type checking
+yarn run type-check
 ```
-app/
-├── components/
-│   ├── ChatContainer.tsx  # Main chat container
-│   ├── ChatMessage.tsx    # Individual message component
-│   └── ChatInput.tsx      # Message input component
-├── globals.css            # Global styles
-├── layout.tsx             # Root layout
-└── page.tsx              # Home page
+
+### Code Style
+
+This project uses:
+
+- **ESLint** for code linting
+- **TypeScript** for type safety
+- **Prettier** for code formatting (recommended)
+
+## 🏗️ Build and Deploy
+
+### Build for Production
+
+```bash
+yarn run build
 ```
 
-## Technologies Used
+### Deploy on Vercel
 
-- [Next.js 16](https://nextjs.org/) - React framework
-- [React 19](https://react.dev/) - UI library
-- [Tailwind CSS v4](https://tailwindcss.com/) - Styling
-- [TypeScript](https://www.typescriptlang.org/) - Type safety
+The easiest way to deploy is using the [Vercel Platform](https://vercel.com/new):
 
-## Learn More
+1. Push your code to a Git repository
+2. Import your project in Vercel
+3. Add your `GEMINI_API_KEY` in the Environment Variables section
+4. Deploy!
 
-To learn more about Next.js, take a look at the following resources:
+## 📄 License
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Deploy on Vercel
+## 🔗 Links
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out the [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Google Gemini AI](https://ai.google.dev/)
+- [Tailwind CSS](https://tailwindcss.com/)
+- [TypeScript](https://www.typescriptlang.org/)
