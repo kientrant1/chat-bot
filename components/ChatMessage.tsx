@@ -1,9 +1,24 @@
 import React from 'react'
+import MarkdownRenderer from './MarkdownRenderer'
 
 interface ChatMessageProps {
-  message: string
+  message: string | React.ReactNode
   isUser: boolean
   timestamp: string
+}
+
+interface MessageContentProps {
+  message: string | React.ReactNode
+  isUser: boolean
+}
+
+const MessageContent = ({ message, isUser }: MessageContentProps) => {
+  if (isUser || typeof message !== 'string') {
+    return <p className="text-sm leading-relaxed">{message}</p>
+  }
+
+  // For AI responses, render as markdown
+  return <MarkdownRenderer content={message} />
 }
 
 export default function ChatMessage({
@@ -23,7 +38,7 @@ export default function ChatMessage({
               : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-100'
           }`}
         >
-          <p className="text-sm leading-relaxed">{message}</p>
+          <MessageContent message={message} isUser={isUser} />
         </div>
         <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 px-2">
           {timestamp}
