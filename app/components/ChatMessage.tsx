@@ -1,15 +1,21 @@
-import React from 'react';
+import React from 'react'
 
 interface ChatMessageProps {
-  message: string;
-  isUser: boolean;
-  timestamp: string;
+  message: string
+  isUser: boolean
+  timestamp: string
 }
 
-export default function ChatMessage({ message, isUser, timestamp }: ChatMessageProps) {
+export default function ChatMessage({
+  message,
+  isUser,
+  timestamp,
+}: ChatMessageProps) {
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`}>
-      <div className={`flex flex-col max-w-[70%] ${isUser ? 'items-end' : 'items-start'}`}>
+      <div
+        className={`flex flex-col max-w-[70%] ${isUser ? 'items-end' : 'items-start'}`}
+      >
         <div
           className={`rounded-2xl px-4 py-3 ${
             isUser
@@ -24,5 +30,5 @@ export default function ChatMessage({ message, isUser, timestamp }: ChatMessageP
         </span>
       </div>
     </div>
-  );
+  )
 }
