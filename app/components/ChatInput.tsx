@@ -1,34 +1,34 @@
-'use client';
+'use client'
 
-import React, { useState, KeyboardEvent } from 'react';
+import React, { useState, KeyboardEvent } from 'react'
 
 interface ChatInputProps {
-  onSendMessage: (message: string) => void;
+  onSendMessage: (message: string) => void
 }
 
 export default function ChatInput({ onSendMessage }: ChatInputProps) {
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState('')
 
   const handleSend = () => {
     if (message.trim()) {
-      onSendMessage(message);
-      setMessage('');
+      onSendMessage(message)
+      setMessage('')
     }
-  };
+  }
 
   const handleKeyPress = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSend();
+      e.preventDefault()
+      handleSend()
     }
-  };
+  }
 
   return (
     <div className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4">
       <div className="flex items-end gap-2 max-w-4xl mx-auto">
         <textarea
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          onChange={e => setMessage(e.target.value)}
           onKeyPress={handleKeyPress}
           placeholder="Type your message..."
           rows={1}
@@ -43,5 +43,5 @@ export default function ChatInput({ onSendMessage }: ChatInputProps) {
         </button>
       </div>
     </div>
-  );
+  )
 }
