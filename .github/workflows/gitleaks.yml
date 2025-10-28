@@ -1,0 +1,34 @@
+name: GitLeaks Security Scan
+
+on:
+  push:
+    branches: ["main", "master", "develop"]
+  pull_request:
+    branches: ["main", "master", "develop"]
+  schedule:
+    # Run weekly on Sundays at 2 AM UTC
+    - cron: "0 2 * * 0"
+
+jobs:
+  gitleaks:
+    name: GitLeaks Secret Detection
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch full history for complete scan
+
+      - name: Run GitLeaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload GitLeaks report
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: gitleaks-report
+          path: results.sarif
+          retention-days: 30
