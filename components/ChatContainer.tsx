@@ -6,22 +6,47 @@ import ChatInput from '@/components/ChatInput'
 import SearchBar from '@/components/SearchBar'
 import { callGeminiAPI } from '@/services/geminiService'
 import { getCurrentTimeString, formatTimestamp } from '@/utils/date'
+import {
+  getStorageItem,
+  setStorageItem,
+  removeStorageItem,
+} from '@/utils/storage'
 import logger from '@/utils/logger'
 import { Message } from '@/types/message'
 
+const CHAT_HISTORY_KEY = 'chatbot-history'
+
+// Default initial message
+const defaultInitialMessage: Message = {
+  id: 'initial-1',
+  text: "Hello! I'm your AI assistant powered by Google Gemini. How can I help you today?",
+  isUser: false,
+  timestamp: getCurrentTimeString(),
+}
+
+const getDefaultInitialMessage = (): Message[] => {
+  const savedMessages = getStorageItem<Message[]>(CHAT_HISTORY_KEY)
+  return savedMessages &&
+    Array.isArray(savedMessages) &&
+    savedMessages.length > 0
+    ? savedMessages
+    : [defaultInitialMessage]
+}
+
 export default function ChatContainer() {
-  const [messages, setMessages] = useState<Message[]>(() => [
-    {
-      id: 'initial-1',
-      text: "Hello! I'm your AI assistant powered by Google Gemini. How can I help you today?",
-      isUser: false,
-      timestamp: getCurrentTimeString(),
-    },
-  ])
+  const [messages, setMessages] = useState<Message[]>(() => {
+    // Load messages from localStorage on initial render
+    return getDefaultInitialMessage()
+  })
   const [isLoading, setIsLoading] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [isSearchVisible, setIsSearchVisible] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  // Save messages to localStorage whenever messages change
+  useEffect(() => {
+    setStorageItem(CHAT_HISTORY_KEY, messages)
+  }, [messages])
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -30,6 +55,22 @@ export default function ChatContainer() {
   useEffect(() => {
     scrollToBottom()
   }, [messages])
+
+  // Clear chat history
+  const handleClearHistory = useCallback(() => {
+    const confirmClear = window.confirm(
+      'Are you sure you want to clear all chat history? This action cannot be undone.'
+    )
+
+    if (confirmClear) {
+      setMessages([defaultInitialMessage])
+      setSearchTerm('')
+      setIsSearchVisible(false)
+
+      // Clear from localStorage
+      removeStorageItem(CHAT_HISTORY_KEY)
+    }
+  }, [])
 
   // Filter messages based on search term
   const filteredMessages = searchTerm
@@ -128,7 +169,26 @@ export default function ChatContainer() {
                 Powered by Google Gemini - Ask me anything!
               </p>
             </div>
-            <div className="shrink-0">
+            <div className="shrink-0 flex items-center gap-2">
+              <button
+                onClick={handleClearHistory}
+                className="px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                title="Clear chat history"
+              >
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                  />
+                </svg>
+              </button>
               <SearchBar
                 isVisible={isSearchVisible}
                 searchTerm={searchTerm}
