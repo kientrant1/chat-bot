@@ -1,0 +1,20 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "files.eol": "\n",
+    "tailwindCSS.includeLanguages": {
+      "plaintext": "html"
+    },
+    "editor.quickSuggestions": {
+      "strings": true
+    },
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "never"
+    },
+    "path-intellisense.showHiddenFiles": true,
+  }
+}
