@@ -7,13 +7,7 @@ import SearchBar from '@/components/SearchBar'
 import { callGeminiAPI } from '@/services/geminiService'
 import { getCurrentTimeString, formatTimestamp } from '@/utils/date'
 import logger from '@/utils/logger'
-
-interface Message {
-  id: string
-  text: string
-  isUser: boolean
-  timestamp: string
-}
+import { Message } from '@/types/message'
 
 export default function ChatContainer() {
   const [messages, setMessages] = useState<Message[]>(() => [
@@ -125,23 +119,25 @@ export default function ChatContainer() {
       {/* Header */}
       <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 p-4 shadow-sm">
         <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100 truncate">
                 AI Chat Bot
               </h1>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
                 Powered by Google Gemini - Ask me anything!
               </p>
             </div>
-            <SearchBar
-              isVisible={isSearchVisible}
-              searchTerm={searchTerm}
-              resultCount={filteredMessages.length}
-              onToggleVisibility={handleToggleSearch}
-              onSearchChange={handleSearchChange}
-              onClearSearch={handleClearSearch}
-            />
+            <div className="shrink-0">
+              <SearchBar
+                isVisible={isSearchVisible}
+                searchTerm={searchTerm}
+                resultCount={filteredMessages.length}
+                onToggleVisibility={handleToggleSearch}
+                onSearchChange={handleSearchChange}
+                onClearSearch={handleClearSearch}
+              />
+            </div>
           </div>
         </div>
       </div>

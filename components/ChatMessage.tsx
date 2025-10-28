@@ -12,7 +12,7 @@ interface MessageContentProps {
   isUser: boolean
 }
 
-const MessageContent: React.FC<MessageContentProps> = ({ message, isUser }) => {
+const MessageContent = ({ message, isUser }: MessageContentProps) => {
   if (isUser || typeof message !== 'string') {
     return <p className="text-sm leading-relaxed">{message}</p>
   }
