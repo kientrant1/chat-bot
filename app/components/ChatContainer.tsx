@@ -15,7 +15,7 @@ export default function ChatContainer() {
   const [messages, setMessages] = useState<Message[]>(() => [
     {
       id: 'initial-1',
-      text: "Hello! I'm your AI assistant. How can I help you today?",
+      text: "Hello! I'm your AI assistant powered by Google Gemini. How can I help you today?",
       isUser: false,
       timestamp: new Date().toLocaleTimeString([], {
         hour: '2-digit',
@@ -23,6 +23,7 @@ export default function ChatContainer() {
       }),
     },
   ])
+  const [isLoading, setIsLoading] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const scrollToBottom = () => {
@@ -33,68 +34,75 @@ export default function ChatContainer() {
     scrollToBottom()
   }, [messages])
 
-  const generateAIResponse = useCallback((userMessage: string): string => {
-    const responses = [
-      "That's a great question! I'm here to help you with that.",
-      "I understand what you're asking. Let me provide you with some information.",
-      "Thanks for sharing that with me. Here's my perspective on it.",
-      "That's an interesting point. I'd be happy to discuss this further.",
-      'I appreciate you reaching out. Let me assist you with that.',
-    ]
+  const callGeminiAPI = async (message: string): Promise<string> => {
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message }),
+      })
 
-    // Simple keyword-based responses
-    const lowerMessage = userMessage.toLowerCase()
-    if (lowerMessage.includes('hello') || lowerMessage.includes('hi')) {
-      return "Hello! It's great to chat with you. What would you like to know?"
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to get AI response')
+      }
+
+      const data = await response.json()
+      return data.response
+    } catch (error) {
+      console.error('Error calling Gemini API:', error)
+      return "I'm sorry, I'm having trouble connecting to the AI service right now. Please try again later."
     }
-    if (lowerMessage.includes('help')) {
-      return "I'm here to help! You can ask me anything, and I'll do my best to assist you."
-    }
-    if (lowerMessage.includes('thank')) {
-      return "You're welcome! Is there anything else I can help you with?"
+  }
+
+  const handleSendMessage = useCallback(async (text: string) => {
+    const now = Date.now()
+    const userMessage: Message = {
+      id: `user-${now}`,
+      text,
+      isUser: true,
+      timestamp: new Date(now).toLocaleTimeString([], {
+        hour: '2-digit',
+        minute: '2-digit',
+      }),
     }
 
-    // Use a deterministic approach instead of Math.random() for better predictability
-    const hash = userMessage.split('').reduce((a, b) => {
-      a = (a << 5) - a + b.charCodeAt(0)
-      return a & a
-    }, 0)
-    const index = Math.abs(hash) % responses.length
-    return responses[index]
-  }, [])
+    setMessages(prev => [...prev, userMessage])
+    setIsLoading(true)
 
-  const handleSendMessage = useCallback(
-    (text: string) => {
-      const now = Date.now()
-      const userMessage: Message = {
-        id: `user-${now}`,
-        text,
-        isUser: true,
-        timestamp: new Date(now).toLocaleTimeString([], {
+    try {
+      // Call Gemini API
+      const aiResponse = await callGeminiAPI(text)
+
+      const aiNow = Date.now()
+      const aiMessage: Message = {
+        id: `ai-${aiNow}`,
+        text: aiResponse,
+        isUser: false,
+        timestamp: new Date(aiNow).toLocaleTimeString([], {
           hour: '2-digit',
           minute: '2-digit',
         }),
       }
-
-      setMessages(prev => [...prev, userMessage])
-
-      // Simulate AI response
-      setTimeout(() => {
-        const aiNow = Date.now()
-        const aiMessage: Message = {
-          id: `ai-${aiNow}`,
-          text: generateAIResponse(text),
-          isUser: false,
-          timestamp: new Date(aiNow).toLocaleTimeString([], {
-            hour: '2-digit',
-            minute: '2-digit',
-          }),
-        }
-        setMessages(prev => [...prev, aiMessage])
-      }, 1000)
-    },
-    [generateAIResponse]
-  )
+      setMessages(prev => [...prev, aiMessage])
+    } catch (error) {
+      console.error('Error generating AI response:', error)
+      const errorMessage: Message = {
+        id: `error-${Date.now()}`,
+        text: "I'm sorry, I encountered an error. Please try again.",
+        isUser: false,
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
+      }
+      setMessages(prev => [...prev, errorMessage])
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
 
   return (
     <div className="flex flex-col h-screen bg-gray-50 dark:bg-black">
@@ -105,7 +113,7 @@ export default function ChatContainer() {
             AI Chat Bot
           </h1>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            Ask me anything!
+            Powered by Google Gemini - Ask me anything!
           </p>
         </div>
       </div>
@@ -121,6 +129,18 @@ export default function ChatContainer() {
               timestamp={msg.timestamp}
             />
           ))}
+          {isLoading && (
+            <div className="flex justify-start mb-4">
+              <div className="bg-white dark:bg-gray-800 rounded-lg p-3 shadow-sm border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center space-x-2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
+                  <span className="text-sm text-gray-600 dark:text-gray-300">
+                    AI is thinking...
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
           <div ref={messagesEndRef} />
         </div>
       </div>
