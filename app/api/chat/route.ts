@@ -1,7 +1,9 @@
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { NextRequest, NextResponse } from 'next/server'
+import { siteConfig } from '@/constants/siteConfig'
+import logger from '@/utils/logger'
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
+const genAI = new GoogleGenerativeAI(siteConfig.gemini.apiKey)
 
 const modelName = 'gemini-2.5-flash'
 
@@ -16,7 +18,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    if (!process.env.GEMINI_API_KEY) {
+    if (!siteConfig.gemini.apiKey) {
       return NextResponse.json(
         { error: 'Gemini API key not configured' },
         { status: 500 }
@@ -33,7 +35,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ response: text })
   } catch (error) {
-    console.error('Gemini API error:', error)
+    logger.error('Gemini API error:', error)
     return NextResponse.json(
       { error: 'Failed to generate AI response' },
       { status: 500 }

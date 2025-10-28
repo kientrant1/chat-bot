@@ -1,8 +1,11 @@
 'use client'
 
 import React, { useState, useRef, useEffect, useCallback } from 'react'
-import ChatMessage from './ChatMessage'
-import ChatInput from './ChatInput'
+import ChatMessage from '@/components/ChatMessage'
+import ChatInput from '@/components/ChatInput'
+import { callGeminiAPI } from '@/services/geminiService'
+import { getCurrentTimeString, formatTimestamp } from '@/utils/date'
+import logger from '@/utils/logger'
 
 interface Message {
   id: string
@@ -17,10 +20,7 @@ export default function ChatContainer() {
       id: 'initial-1',
       text: "Hello! I'm your AI assistant powered by Google Gemini. How can I help you today?",
       isUser: false,
-      timestamp: new Date().toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-      }),
+      timestamp: getCurrentTimeString(),
     },
   ])
   const [isLoading, setIsLoading] = useState(false)
@@ -34,39 +34,13 @@ export default function ChatContainer() {
     scrollToBottom()
   }, [messages])
 
-  const callGeminiAPI = async (message: string): Promise<string> => {
-    try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ message }),
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to get AI response')
-      }
-
-      const data = await response.json()
-      return data.response
-    } catch (error) {
-      console.error('Error calling Gemini API:', error)
-      return "I'm sorry, I'm having trouble connecting to the AI service right now. Please try again later."
-    }
-  }
-
   const handleSendMessage = useCallback(async (text: string) => {
     const now = Date.now()
     const userMessage: Message = {
       id: `user-${now}`,
       text,
       isUser: true,
-      timestamp: new Date(now).toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-      }),
+      timestamp: formatTimestamp(now),
     }
 
     setMessages(prev => [...prev, userMessage])
@@ -81,22 +55,16 @@ export default function ChatContainer() {
         id: `ai-${aiNow}`,
         text: aiResponse,
         isUser: false,
-        timestamp: new Date(aiNow).toLocaleTimeString([], {
-          hour: '2-digit',
-          minute: '2-digit',
-        }),
+        timestamp: formatTimestamp(aiNow),
       }
       setMessages(prev => [...prev, aiMessage])
     } catch (error) {
-      console.error('Error generating AI response:', error)
+      logger.error('Error generating AI response:', error)
       const errorMessage: Message = {
         id: `error-${Date.now()}`,
         text: "I'm sorry, I encountered an error. Please try again.",
         isUser: false,
-        timestamp: new Date().toLocaleTimeString([], {
-          hour: '2-digit',
-          minute: '2-digit',
-        }),
+        timestamp: getCurrentTimeString(),
       }
       setMessages(prev => [...prev, errorMessage])
     } finally {
