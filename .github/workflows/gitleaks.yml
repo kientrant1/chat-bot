@@ -1,4 +1,4 @@
-name: GitLeaks Security Scan
+name: Gitleaks Security Scan
 
 on:
   push:
@@ -11,7 +11,7 @@ on:
 
 jobs:
   gitleaks:
-    name: GitLeaks Secret Detection
+    name: Gitleaks Secret Detection
     runs-on: ubuntu-latest
 
     steps:
@@ -20,14 +20,12 @@ jobs:
         with:
           fetch-depth: 0 # Fetch full history for complete scan
 
-      - name: Run GitLeaks
+      - name: Run Gitleaks
         uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload GitLeaks report
+      - name: Upload Gitleaks report
         uses: actions/upload-artifact@v4
-        if: failure()
+        if: always()
         with:
           name: gitleaks-report
           path: results.sarif
