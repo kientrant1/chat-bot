@@ -1,5 +1,8 @@
 import logger from './logger'
 
+export enum STORAGE_KEY {
+  CHAT_HISTORY_KEY = 'chatbot-history',
+}
 /**
  * Utility functions for localStorage operations with error handling
  */

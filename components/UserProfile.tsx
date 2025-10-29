@@ -7,6 +7,7 @@ import logger from '../utils/logger'
 import ChevronDownIcon from './icons/ChevronDownIcon'
 import LogoutIcon from './icons/LogoutIcon'
 import { PAGE_URL } from '@/constants/url'
+import { removeStorageItem, STORAGE_KEY } from '@/utils/storage'
 
 interface UserProfileProps {
   userName?: string
@@ -59,6 +60,7 @@ export default function UserProfile({
 
   const handleSignOut = async () => {
     try {
+      removeStorageItem(STORAGE_KEY.CHAT_HISTORY_KEY)
       await signOut({
         callbackUrl: PAGE_URL.LOGIN,
         redirect: true,

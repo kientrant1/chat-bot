@@ -14,11 +14,10 @@ import {
   getStorageItem,
   setStorageItem,
   removeStorageItem,
+  STORAGE_KEY,
 } from '@/utils/storage'
 import logger from '@/utils/logger'
 import { Message } from '@/types/message'
-
-const CHAT_HISTORY_KEY = 'chatbot-history'
 
 // Default initial message
 const defaultInitialMessage: Message = {
@@ -29,7 +28,7 @@ const defaultInitialMessage: Message = {
 }
 
 const getDefaultInitialMessage = (): Message[] => {
-  const savedMessages = getStorageItem<Message[]>(CHAT_HISTORY_KEY)
+  const savedMessages = getStorageItem<Message[]>(STORAGE_KEY.CHAT_HISTORY_KEY)
   return savedMessages &&
     Array.isArray(savedMessages) &&
     savedMessages.length > 0
@@ -71,7 +70,7 @@ export default function ChatContainer() {
 
   // Save messages to localStorage whenever messages change
   useEffect(() => {
-    setStorageItem(CHAT_HISTORY_KEY, messages)
+    setStorageItem(STORAGE_KEY.CHAT_HISTORY_KEY, messages)
   }, [messages])
 
   const scrollToBottom = () => {
@@ -94,7 +93,7 @@ export default function ChatContainer() {
     setShowConfirmation(false)
 
     // Clear from localStorage
-    removeStorageItem(CHAT_HISTORY_KEY)
+    removeStorageItem(STORAGE_KEY.CHAT_HISTORY_KEY)
   }, [])
 
   const handleCancelClear = useCallback(() => {
