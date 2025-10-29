@@ -7,7 +7,7 @@ A modern AI chatbot application built with Next.js 15 and powered by Google Gemi
 - 🤖 **AI-Powered Chat** - Integrated with Google Gemini 2.0 Flash model
 - 💬 **Real-time Chat Interface** - Smooth, responsive messaging experience
 - 🔍 **Message Search** - Search through chat history with highlighting
-- 💾 **Persistent Storage** - Chat history saved in localStorage
+- 💾 **Persistent Storage** - Chat history saved in localStorage. It's sent to AI to respond appropriately based on the full conversation context
 - 🎨 **Modern UI Design** - Built with Tailwind CSS v4
 - 📱 **Fully Responsive** - Works seamlessly on desktop and mobile
 - ⚡ **Fast Performance** - Built with Next.js 16 App Router

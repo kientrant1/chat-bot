@@ -107,47 +107,51 @@ export default function ChatContainer() {
     )
   }
 
-  const handleSendMessage = useCallback(async (text: string) => {
-    // Clear search when sending new message
-    setSearchTerm('')
-    setIsSearchVisible(false)
+  const handleSendMessage = useCallback(
+    async (text: string) => {
+      // Clear search when sending new message
+      setSearchTerm('')
+      setIsSearchVisible(false)
 
-    const now = Date.now()
-    const userMessage: Message = {
-      id: `user-${now}`,
-      text,
-      isUser: true,
-      timestamp: formatTimestamp(now),
-    }
-
-    setMessages(prev => [...prev, userMessage])
-    setIsLoading(true)
-
-    try {
-      // Call Gemini API
-      const aiResponse = await callGeminiAPI(text)
-
-      const aiNow = Date.now()
-      const aiMessage: Message = {
-        id: `ai-${aiNow}`,
-        text: aiResponse,
-        isUser: false,
-        timestamp: formatTimestamp(aiNow),
+      const now = Date.now()
+      const userMessage: Message = {
+        id: `user-${now}`,
+        text,
+        isUser: true,
+        timestamp: formatTimestamp(now),
       }
-      setMessages(prev => [...prev, aiMessage])
-    } catch (error) {
-      logger.error('Error generating AI response:', error)
-      const errorMessage: Message = {
-        id: `error-${Date.now()}`,
-        text: "I'm sorry, I encountered an error. Please try again.",
-        isUser: false,
-        timestamp: getCurrentTimeString(),
+
+      const messagesWithNewUser = [...messages, userMessage]
+      setMessages(messagesWithNewUser)
+      setIsLoading(true)
+
+      try {
+        // Call Gemini API with full conversation history
+        const aiResponse = await callGeminiAPI(messagesWithNewUser)
+
+        const aiNow = Date.now()
+        const aiMessage: Message = {
+          id: `ai-${aiNow}`,
+          text: aiResponse,
+          isUser: false,
+          timestamp: formatTimestamp(aiNow),
+        }
+        setMessages(prev => [...prev, aiMessage])
+      } catch (error) {
+        logger.error('Error generating AI response:', error)
+        const errorMessage: Message = {
+          id: `error-${Date.now()}`,
+          text: "I'm sorry, I encountered an error. Please try again.",
+          isUser: false,
+          timestamp: getCurrentTimeString(),
+        }
+        setMessages(prev => [...prev, errorMessage])
+      } finally {
+        setIsLoading(false)
       }
-      setMessages(prev => [...prev, errorMessage])
-    } finally {
-      setIsLoading(false)
-    }
-  }, [])
+    },
+    [messages]
+  )
 
   const handleToggleSearch = () => {
     setIsSearchVisible(!isSearchVisible)

@@ -1,13 +1,14 @@
 import logger from '@/utils/logger'
+import { Message } from '@/types/message'
 
-export const callGeminiAPI = async (message: string): Promise<string> => {
+export const callGeminiAPI = async (messages: Message[]): Promise<string> => {
   try {
     const response = await fetch('/api/chat', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ message }),
+      body: JSON.stringify({ messages }),
     })
 
     if (!response.ok) {
