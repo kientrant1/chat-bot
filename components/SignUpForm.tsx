@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import Link from 'next/link'
 import GoogleIcon from './icons/GoogleIcon'
 import GitHubIcon from './icons/GitHubIcon'
+import OwlWatcher from './OwlWatcher'
 
 interface SignUpFormProps {
   onSubmit?: (formData: {
@@ -85,6 +86,9 @@ export default function SignUpForm({
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8">
+      {/* Friendly Owl */}
+      <OwlWatcher className="owl-container" />
+
       {/* Header */}
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
