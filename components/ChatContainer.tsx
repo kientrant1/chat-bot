@@ -36,6 +36,27 @@ const getDefaultInitialMessage = (): Message[] => {
     : [defaultInitialMessage]
 }
 
+// Highlight search term if matching words or phrases in history chat
+const highlightSearchTerm = (text: string, searchTerm: string) => {
+  if (!searchTerm) return text
+
+  const regex = new RegExp(`(${searchTerm})`, 'gi')
+  const parts = text.split(regex)
+
+  return parts.map((part, index) =>
+    regex.test(part) ? (
+      <span
+        key={index}
+        className="bg-yellow-200 dark:bg-yellow-600 px-1 rounded"
+      >
+        {part}
+      </span>
+    ) : (
+      part
+    )
+  )
+}
+
 export default function ChatContainer() {
   const [messages, setMessages] = useState<Message[]>(() => {
     // Load messages from localStorage on initial render
@@ -85,27 +106,6 @@ export default function ChatContainer() {
         message.text.toLowerCase().includes(searchTerm.toLowerCase())
       )
     : messages
-
-  // Highlight search term in message text
-  const highlightSearchTerm = (text: string, searchTerm: string) => {
-    if (!searchTerm) return text
-
-    const regex = new RegExp(`(${searchTerm})`, 'gi')
-    const parts = text.split(regex)
-
-    return parts.map((part, index) =>
-      regex.test(part) ? (
-        <span
-          key={index}
-          className="bg-yellow-200 dark:bg-yellow-600 px-1 rounded"
-        >
-          {part}
-        </span>
-      ) : (
-        part
-      )
-    )
-  }
 
   const handleSendMessage = useCallback(
     async (text: string) => {
