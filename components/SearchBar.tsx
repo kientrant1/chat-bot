@@ -1,6 +1,7 @@
 import React from 'react'
+import { ComponentProps } from '../types/component'
 
-interface SearchBarProps {
+interface SearchBarProps extends ComponentProps {
   isVisible: boolean
   searchTerm: string
   resultCount: number
@@ -16,9 +17,16 @@ export default function SearchBar({
   onToggleVisibility,
   onSearchChange,
   onClearSearch,
+  className,
+  testId,
+  ...props
 }: SearchBarProps) {
   return (
-    <div className="flex items-center gap-3">
+    <div
+      className={`flex items-center gap-3 ${className || ''}`}
+      data-testid={testId}
+      {...props}
+    >
       {/* Search Input - Show when visible */}
       {isVisible && (
         <div className="flex items-center gap-2 animate-in slide-in-from-right-5 duration-200">

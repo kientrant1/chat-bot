@@ -1,13 +1,14 @@
 import React from 'react'
+import { ComponentProps } from '../types/component'
 import MarkdownRenderer from './MarkdownRenderer'
 
-interface ChatMessageProps {
+interface ChatMessageProps extends ComponentProps {
   message: string | React.ReactNode
   isUser: boolean
   timestamp: string
 }
 
-interface MessageContentProps {
+interface MessageContentProps extends ComponentProps {
   message: string | React.ReactNode
   isUser: boolean
 }
@@ -25,9 +26,16 @@ export default function ChatMessage({
   message,
   isUser,
   timestamp,
+  className,
+  testId,
+  ...props
 }: ChatMessageProps) {
   return (
-    <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`}>
+    <div
+      className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4 ${className || ''}`}
+      data-testid={testId}
+      {...props}
+    >
       <div
         className={`flex flex-col max-w-[70%] ${isUser ? 'items-end' : 'items-start'}`}
       >

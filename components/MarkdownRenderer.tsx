@@ -2,19 +2,21 @@ import React from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import rehypeHighlight from 'rehype-highlight'
+import { ComponentProps } from '../types/component'
 import 'highlight.js/styles/github-dark.css'
 
-interface MarkdownRendererProps {
+interface MarkdownRendererProps extends ComponentProps {
   content: string
-  className?: string
 }
 
 export default function MarkdownRenderer({
   content,
   className = 'text-sm leading-relaxed prose prose-sm max-w-none dark:prose-invert',
+  testId,
+  ...props
 }: MarkdownRendererProps) {
   return (
-    <div className={className}>
+    <div className={className} data-testid={testId} {...props}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeHighlight]}

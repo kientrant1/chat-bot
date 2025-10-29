@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react'
 import ChatMessage from '@/components/ChatMessage'
 import ChatInput from '@/components/ChatInput'
 import SearchBar from '@/components/SearchBar'
+import Confirmation from '@/components/Confirmation'
 import { callGeminiAPI } from '@/services/geminiService'
 import { getCurrentTimeString, formatTimestamp } from '@/utils/date'
 import {
@@ -41,6 +42,7 @@ export default function ChatContainer() {
   const [isLoading, setIsLoading] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [isSearchVisible, setIsSearchVisible] = useState(false)
+  const [showConfirmation, setShowConfirmation] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   // Save messages to localStorage whenever messages change
@@ -58,18 +60,21 @@ export default function ChatContainer() {
 
   // Clear chat history
   const handleClearHistory = useCallback(() => {
-    const confirmClear = window.confirm(
-      'Are you sure you want to clear all chat history? This action cannot be undone.'
-    )
+    setShowConfirmation(true)
+  }, [])
 
-    if (confirmClear) {
-      setMessages([defaultInitialMessage])
-      setSearchTerm('')
-      setIsSearchVisible(false)
+  const handleConfirmClear = useCallback(() => {
+    setMessages([defaultInitialMessage])
+    setSearchTerm('')
+    setIsSearchVisible(false)
+    setShowConfirmation(false)
 
-      // Clear from localStorage
-      removeStorageItem(CHAT_HISTORY_KEY)
-    }
+    // Clear from localStorage
+    removeStorageItem(CHAT_HISTORY_KEY)
+  }, [])
+
+  const handleCancelClear = useCallback(() => {
+    setShowConfirmation(false)
   }, [])
 
   // Filter messages based on search term
@@ -254,6 +259,18 @@ export default function ChatContainer() {
 
       {/* Input */}
       <ChatInput onSendMessage={handleSendMessage} />
+
+      {/* Confirmation Modal */}
+      <Confirmation
+        isOpen={showConfirmation}
+        title="Clear Chat History"
+        message="Are you sure you want to clear all chat history? This action cannot be undone."
+        confirmText="Clear History"
+        cancelText="Cancel"
+        variant="danger"
+        onConfirm={handleConfirmClear}
+        onCancel={handleCancelClear}
+      />
     </div>
   )
 }

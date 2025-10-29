@@ -1,12 +1,18 @@
 'use client'
 
 import React, { useState, KeyboardEvent } from 'react'
+import { ComponentProps } from '../types/component'
 
-interface ChatInputProps {
+interface ChatInputProps extends ComponentProps {
   onSendMessage: (message: string) => void
 }
 
-export default function ChatInput({ onSendMessage }: ChatInputProps) {
+export default function ChatInput({
+  onSendMessage,
+  className,
+  testId,
+  ...props
+}: ChatInputProps) {
   const [message, setMessage] = useState('')
 
   const handleSend = () => {
@@ -24,7 +30,11 @@ export default function ChatInput({ onSendMessage }: ChatInputProps) {
   }
 
   return (
-    <div className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4">
+    <div
+      className={`border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4 ${className || ''}`}
+      data-testid={testId}
+      {...props}
+    >
       <div className="flex items-end gap-2 max-w-4xl mx-auto">
         <textarea
           value={message}
