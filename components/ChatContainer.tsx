@@ -5,6 +5,7 @@ import ChatMessage from '@/components/ChatMessage'
 import ChatInput from '@/components/ChatInput'
 import SearchBar from '@/components/SearchBar'
 import Confirmation from '@/components/Confirmation'
+import UserProfile from '@/components/UserProfile'
 import DeleteIcon from '@/components/icons/DeleteIcon'
 import SearchNotFoundIcon from '@/components/icons/SearchNotFoundIcon'
 import { callGeminiAPI } from '@/services/geminiService'
@@ -180,7 +181,7 @@ export default function ChatContainer() {
                 Powered by Google Gemini - Ask me anything!
               </p>
             </div>
-            <div className="shrink-0 flex items-center gap-2">
+            <div className="shrink-0 flex items-center gap-3">
               <button
                 onClick={handleClearHistory}
                 className="px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
@@ -196,6 +197,9 @@ export default function ChatContainer() {
                 onSearchChange={handleSearchChange}
                 onClearSearch={handleClearSearch}
               />
+              <div className="pl-3 border-l border-gray-200 dark:border-gray-600">
+                <UserProfile />
+              </div>
             </div>
           </div>
         </div>
