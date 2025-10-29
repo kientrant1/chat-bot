@@ -1,10 +1,10 @@
-import ClientGuard from '@/components/authen/ClientGuard'
+import ServerGuard from '@/components/authen/ServerGuard'
 import ChatContainer from '@/components/ChatContainer'
 
 export default function Home() {
   return (
-    <ClientGuard requireAuth={true}>
+    <ServerGuard>
       <ChatContainer />
-    </ClientGuard>
+    </ServerGuard>
   )
 }

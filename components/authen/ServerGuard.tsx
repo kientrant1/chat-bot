@@ -7,45 +7,19 @@ import logger from '../../utils/logger'
 
 interface WithGuardProps {
   children: ReactNode
-  requireAuth?: boolean
-  fallbackComponent?: ReactNode
   redirectTo?: string
 }
 
 // Handles authentication guard for server components
 export default async function ServerGuard({
   children,
-  requireAuth = true,
-  fallbackComponent,
   redirectTo,
 }: WithGuardProps) {
   const session = await getServerSession(authOptions)
 
-  // For pages that require authentication
-  if (requireAuth) {
-    if (!session) {
-      logger.info('Server-side: User not authenticated, redirecting to login')
-      redirect(redirectTo || PAGE_URL.LOGIN)
-    }
-
-    return <>{children}</>
-  }
-
-  // For pages that should redirect authenticated users (like login/signup)
-  if (!requireAuth) {
-    if (session) {
-      logger.info(
-        'Server-side: User already authenticated, redirecting to home'
-      )
-      redirect(redirectTo || PAGE_URL.HOME)
-    }
-
-    return <>{children}</>
-  }
-
-  // Fallback case
-  if (fallbackComponent) {
-    return <>{fallbackComponent}</>
+  if (!session) {
+    logger.info('Server-side: User not authenticated, redirecting to login')
+    redirect(redirectTo || PAGE_URL.LOGIN)
   }
 
   return <>{children}</>
@@ -55,7 +29,6 @@ export default async function ServerGuard({
 export function withServerGuard<P extends object>(
   Component: React.ComponentType<P>,
   options: {
-    requireAuth?: boolean
     redirectTo?: string
     fallbackComponent?: ReactNode
   } = {}
