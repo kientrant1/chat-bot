@@ -2,6 +2,8 @@
 
 import React from 'react'
 import LoginForm from '@/components/LoginForm'
+import ClientGuard from '@/components/authen/ClientGuard'
+import { signIn } from 'next-auth/react'
 
 export default function LoginPage() {
   const handleLogin = async (formData: {
@@ -17,15 +19,16 @@ export default function LoginPage() {
   }
 
   const handleSocialLogin = (provider: 'google' | 'github') => {
-    // TODO: Implement social login
-    console.log(`Login with ${provider}`)
+    signIn(provider, { callbackUrl: '/' })
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <LoginForm onSubmit={handleLogin} onSocialLogin={handleSocialLogin} />
+    <ClientGuard requireAuth={false}>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full space-y-8">
+          <LoginForm onSubmit={handleLogin} onSocialLogin={handleSocialLogin} />
+        </div>
       </div>
-    </div>
+    </ClientGuard>
   )
 }
