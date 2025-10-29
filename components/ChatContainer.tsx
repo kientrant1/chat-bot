@@ -10,30 +10,14 @@ import DeleteIcon from '@/components/icons/DeleteIcon'
 import SearchNotFoundIcon from '@/components/icons/SearchNotFoundIcon'
 import { callGeminiAPI } from '@/services/geminiService'
 import { getCurrentTimeString, formatTimestamp } from '@/utils/date'
-import {
-  getStorageItem,
-  setStorageItem,
-  removeStorageItem,
-  STORAGE_KEY,
-} from '@/utils/storage'
+import { setStorageItem, removeStorageItem, STORAGE_KEY } from '@/utils/storage'
 import logger from '@/utils/logger'
 import { Message } from '@/types/message'
+import { getDefaultInitialMessage, initializeMessage } from '@/utils/message'
+import { ComponentProps } from '../types/component'
 
-// Default initial message
-const defaultInitialMessage: Message = {
-  id: 'initial-1',
-  text: "Hello! I'm your AI assistant powered by Google Gemini. How can I help you today?",
-  isUser: false,
-  timestamp: getCurrentTimeString(),
-}
-
-const getDefaultInitialMessage = (): Message[] => {
-  const savedMessages = getStorageItem<Message[]>(STORAGE_KEY.CHAT_HISTORY_KEY)
-  return savedMessages &&
-    Array.isArray(savedMessages) &&
-    savedMessages.length > 0
-    ? savedMessages
-    : [defaultInitialMessage]
+interface ChatContainerProps extends ComponentProps {
+  userName: string
 }
 
 // Highlight search term if matching words or phrases in history chat
@@ -57,10 +41,10 @@ const highlightSearchTerm = (text: string, searchTerm: string) => {
   )
 }
 
-export default function ChatContainer() {
+export default function ChatContainer({ userName }: ChatContainerProps) {
   const [messages, setMessages] = useState<Message[]>(() => {
     // Load messages from localStorage on initial render
-    return getDefaultInitialMessage()
+    return getDefaultInitialMessage(userName)
   })
   const [isLoading, setIsLoading] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
@@ -87,14 +71,14 @@ export default function ChatContainer() {
   }, [])
 
   const handleConfirmClear = useCallback(() => {
-    setMessages([defaultInitialMessage])
+    setMessages([initializeMessage(userName)])
     setSearchTerm('')
     setIsSearchVisible(false)
     setShowConfirmation(false)
 
     // Clear from localStorage
     removeStorageItem(STORAGE_KEY.CHAT_HISTORY_KEY)
-  }, [])
+  }, [userName])
 
   const handleCancelClear = useCallback(() => {
     setShowConfirmation(false)

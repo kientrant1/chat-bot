@@ -1,10 +1,10 @@
 import ServerGuard from '@/components/authen/ServerGuard'
-import ChatContainer from '@/components/ChatContainer'
+import ChatContainerWrapper from '@/components/ChatContainerWrapper'
 
 export default function Home() {
   return (
     <ServerGuard>
-      <ChatContainer />
+      <ChatContainerWrapper />
     </ServerGuard>
   )
 }
