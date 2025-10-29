@@ -4,10 +4,10 @@ import React, { useState, useRef, useEffect, useCallback } from 'react'
 import ChatMessage from '@/components/ChatMessage'
 import ChatInput from '@/components/ChatInput'
 import SearchBar from '@/components/SearchBar'
+import SearchNotFound from '@/components/SearchNotFound'
 import Confirmation from '@/components/Confirmation'
 import UserProfile from '@/components/UserProfile'
 import DeleteIcon from '@/components/icons/DeleteIcon'
-import SearchNotFoundIcon from '@/components/icons/SearchNotFoundIcon'
 import { callGeminiAPI } from '@/services/geminiService'
 import { getCurrentTimeString, formatTimestamp } from '@/utils/date'
 import { setStorageItem, removeStorageItem, STORAGE_KEY } from '@/utils/storage'
@@ -201,13 +201,7 @@ export default function ChatContainer({ userName }: ChatContainerProps) {
           ))}
 
           {searchTerm && filteredMessages.length === 0 && (
-            <div className="text-center py-8">
-              <div className="text-gray-500 dark:text-gray-400">
-                <SearchNotFoundIcon className="mx-auto mb-3 opacity-50" />
-                <p className="text-lg font-medium mb-1">No messages found</p>
-                <p className="text-sm">Try searching with different keywords</p>
-              </div>
-            </div>
+            <SearchNotFound searchTerm={searchTerm} />
           )}
 
           {isLoading && (
