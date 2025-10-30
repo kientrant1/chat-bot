@@ -1,15 +1,16 @@
 import { siteConfig } from '@/constants/siteConfig'
 import { PAGE_URL } from '@/constants/url'
 import NextAuth, { NextAuthOptions } from 'next-auth'
-import GoogleProvider from 'next-auth/providers/google'
+import {
+  firebaseCredentialsProvider,
+  googleCredentialsProvider,
+} from '@/lib/credentialsProvider'
 
 export const authOptions: NextAuthOptions = {
   // Configure one or more authentication providers
   providers: [
-    GoogleProvider({
-      clientId: siteConfig.auth.googleClientId,
-      clientSecret: siteConfig.auth.googleClientSecret,
-    }),
+    googleCredentialsProvider,
+    firebaseCredentialsProvider,
     // ...add more providers here
   ],
   // NextAuth.js will generate a secret when NODEV_ENV is 'development'
