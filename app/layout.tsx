@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import '@/styles/globals.css'
 import AuthProvider from '@/context/AuthenProvider'
+import { ToastProvider } from '@/context/ToastProvider'
+import { ToastContainer } from '@/components/ToastContainer'
 
 export const metadata: Metadata = {
   title: 'AI Chat Bot',
@@ -15,7 +17,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased" suppressHydrationWarning={true}>
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <ToastProvider>
+            {children}
+            <ToastContainer />
+          </ToastProvider>
+        </AuthProvider>
       </body>
     </html>
   )
