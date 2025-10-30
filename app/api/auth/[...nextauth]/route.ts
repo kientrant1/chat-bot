@@ -1,9 +1,12 @@
 import { siteConfig } from '@/constants/siteConfig'
 import { PAGE_URL } from '@/constants/url'
+import { prisma } from '@/lib/prisma'
+import { PrismaAdapter } from '@next-auth/prisma-adapter'
 import NextAuth, { NextAuthOptions } from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 
 export const authOptions: NextAuthOptions = {
+  adapter: PrismaAdapter(prisma),
   // Configure one or more authentication providers
   providers: [
     GoogleProvider({
