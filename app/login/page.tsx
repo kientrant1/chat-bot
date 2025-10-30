@@ -1,34 +1,14 @@
 'use client'
 
 import React from 'react'
-import LoginForm from '@/components/LoginForm'
-import ClientGuard from '@/components/authen/ClientGuard'
-import { signIn } from 'next-auth/react'
+import LoginContainer from '@/components/LoginContainer'
 
 export default function LoginPage() {
-  const handleLogin = async (formData: {
-    email: string
-    password: string
-    rememberMe: boolean
-  }) => {
-    // TODO: Implement actual authentication logic here
-    console.log('Login attempt:', formData)
-
-    // Redirect to main chat page on success
-    window.location.href = '/'
-  }
-
-  const handleSocialLogin = (provider: 'google' | 'github') => {
-    signIn(provider, { callbackUrl: '/' })
-  }
-
   return (
-    <ClientGuard requireAuth={false}>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full space-y-8">
-          <LoginForm onSubmit={handleLogin} onSocialLogin={handleSocialLogin} />
-        </div>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        <LoginContainer />
       </div>
-    </ClientGuard>
+    </div>
   )
 }

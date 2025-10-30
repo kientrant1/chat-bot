@@ -2,9 +2,11 @@
 
 import React, { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import GoogleIcon from './icons/GoogleIcon'
 import GitHubIcon from './icons/GitHubIcon'
 import OwlWatcher from './OwlWatcher'
+import logger from '@/utils/logger'
 
 interface SignUpFormProps {
   onSubmit?: (formData: {
@@ -21,6 +23,7 @@ export default function SignUpForm({
   onSubmit,
   onSocialLogin,
 }: SignUpFormProps) {
+  const router = useRouter()
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -62,7 +65,7 @@ export default function SignUpForm({
         await onSubmit(formData)
       } else {
         // Default behavior if no onSubmit prop provided
-        window.location.href = '/'
+        router.push('/')
       }
     } catch (err) {
       setError(
@@ -76,6 +79,7 @@ export default function SignUpForm({
   }
 
   const handleSocialLogin = (provider: 'google' | 'github') => {
+    logger.info('Social sign up clicked', { provider })
     if (onSocialLogin) {
       onSocialLogin(provider)
     } else {

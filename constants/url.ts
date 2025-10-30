@@ -3,3 +3,7 @@ export const PAGE_URL = {
   LOGIN: '/login',
   SIGN_UP: '/signup',
 }
+
+export const API_URL = {
+  SIGN_UP: '/api/signup',
+}

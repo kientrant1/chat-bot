@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
 import OwlWatcher from './OwlWatcher'
+import logger from '@/utils/logger'
 
 interface LoginFormProps {
   onSubmit?: (formData: {
@@ -40,9 +41,6 @@ export default function LoginForm({ onSubmit, onSocialLogin }: LoginFormProps) {
     try {
       if (onSubmit) {
         await onSubmit(formData)
-      } else {
-        // Default behavior if no onSubmit prop provided
-        window.location.href = '/'
       }
     } catch (err) {
       setError(
@@ -54,6 +52,7 @@ export default function LoginForm({ onSubmit, onSocialLogin }: LoginFormProps) {
   }
 
   const handleSocialLogin = (provider: 'google' | 'github') => {
+    logger.info('Social login clicked', { provider })
     if (onSocialLogin) {
       onSocialLogin(provider)
     } else {
