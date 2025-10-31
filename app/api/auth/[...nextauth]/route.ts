@@ -21,6 +21,7 @@ export const authOptions: NextAuthOptions = {
   ],
   // NextAuth.js will generate a secret when NODEV_ENV is 'development'
   secret: siteConfig.auth.nextAuthSecret,
+  session: { strategy: 'jwt' },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
