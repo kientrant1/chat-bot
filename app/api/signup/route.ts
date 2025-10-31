@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
-import { auth } from '@/lib/firebase'
 import logger from '@/utils/logger'
 import { prisma } from '@/lib/prisma'
 import bcrypt from 'bcrypt'
+import { createUserWithEmailAndPassword } from '@/lib/firebase'
 
 const createFirebaseUser = async (
   email: string,
@@ -11,19 +10,7 @@ const createFirebaseUser = async (
   password: string
 ) => {
   // Create user with Firebase Auth
-  const userCredential = await createUserWithEmailAndPassword(
-    auth,
-    email,
-    password
-  )
-
-  const user = userCredential.user
-
-  // Update the user's display name
-  await updateProfile(user, {
-    displayName: name,
-  })
-
+  const user = await createUserWithEmailAndPassword(email, password, name)
   return user
 }
 

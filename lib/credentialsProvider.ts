@@ -1,11 +1,10 @@
 import CredentialsProvider from 'next-auth/providers/credentials'
 import GoogleProvider from 'next-auth/providers/google'
-import { signInWithEmailAndPassword } from 'firebase/auth'
-import { auth } from '@/lib/firebase'
 import logger from '@/utils/logger'
 import { siteConfig } from '@/constants/siteConfig'
 import bcrypt from 'bcrypt'
 import { prisma } from './prisma'
+import { signInWithEmailAndPassword } from './firebase'
 
 export const googleCredentialsProvider = GoogleProvider({
   clientId: siteConfig.auth.googleClientId,
@@ -25,7 +24,6 @@ export const firebaseCredentialsProvider = CredentialsProvider({
 
     try {
       const userCredential = await signInWithEmailAndPassword(
-        auth,
         credentials.email,
         credentials.password
       )
