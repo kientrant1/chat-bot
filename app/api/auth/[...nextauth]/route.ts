@@ -6,6 +6,7 @@ import NextAuth, { NextAuthOptions } from 'next-auth'
 import {
   firebaseCredentialsProvider,
   googleCredentialsProvider,
+  prismaCredentialsProvider,
 } from '@/lib/credentialsProvider'
 
 export const authOptions: NextAuthOptions = {
@@ -13,7 +14,9 @@ export const authOptions: NextAuthOptions = {
   // Configure one or more authentication providers
   providers: [
     googleCredentialsProvider,
-    firebaseCredentialsProvider,
+    process.env.USE_PRISMA_AUTH === 'true'
+      ? prismaCredentialsProvider
+      : firebaseCredentialsProvider,
     // ...add more providers here
   ],
   // NextAuth.js will generate a secret when NODEV_ENV is 'development'

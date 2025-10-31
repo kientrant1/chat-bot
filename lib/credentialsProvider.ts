@@ -4,6 +4,8 @@ import { signInWithEmailAndPassword } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
 import logger from '@/utils/logger'
 import { siteConfig } from '@/constants/siteConfig'
+import bcrypt from 'bcrypt'
+import { prisma } from './prisma'
 
 export const googleCredentialsProvider = GoogleProvider({
   clientId: siteConfig.auth.googleClientId,
@@ -61,6 +63,56 @@ export const firebaseCredentialsProvider = CredentialsProvider({
             throw new Error('Too many failed attempts. Please try again later')
         }
       }
+
+      throw new Error('Authentication failed')
+    }
+  },
+})
+
+export const prismaCredentialsProvider = CredentialsProvider({
+  name: 'credentials',
+  credentials: {
+    email: { label: 'Email', type: 'email' },
+    password: { label: 'Password', type: 'password' },
+  },
+  async authorize(credentials) {
+    if (!credentials?.email || !credentials?.password) {
+      return null
+    }
+
+    try {
+      const user = await prisma.user.findUnique({
+        where: { email: credentials.email },
+      })
+
+      if (!user) {
+        throw new Error('No user with that email')
+      }
+
+      // compare password
+      const validPassword = await bcrypt.compare(
+        credentials.password,
+        user.passwordHash ?? ''
+      )
+
+      if (!validPassword) {
+        throw new Error('Incorrect credentials')
+      }
+
+      logger.info('User signed in successfully via NextAuth', {
+        uid: user.id,
+        email: user.email,
+      })
+
+      // 4. return a minimal user object
+      return {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        image: '',
+      }
+    } catch (error: unknown) {
+      logger.error('Prisma signin error in NextAuth', error)
 
       throw new Error('Authentication failed')
     }
