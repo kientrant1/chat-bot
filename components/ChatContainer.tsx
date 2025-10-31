@@ -84,6 +84,14 @@ export default function ChatContainer({ userName }: ChatContainerProps) {
     setShowConfirmation(false)
   }, [])
 
+  // Handle import of chat history
+  const handleImportHistory = useCallback((importedMessages: Message[]) => {
+    setMessages(importedMessages)
+    setSearchTerm('')
+    setIsSearchVisible(false)
+    logger.info(`Imported ${importedMessages.length} messages`)
+  }, [])
+
   // Filter messages based on search term
   const filteredMessages = searchTerm
     ? messages.filter(message =>
@@ -181,7 +189,10 @@ export default function ChatContainer({ userName }: ChatContainerProps) {
                 onClearSearch={handleClearSearch}
               />
               <div className="pl-3 border-l border-gray-200 dark:border-gray-600">
-                <UserProfile />
+                <UserProfile
+                  messages={messages}
+                  onImportHistory={handleImportHistory}
+                />
               </div>
             </div>
           </div>

@@ -6,14 +6,18 @@ import { useSession, signOut } from 'next-auth/react'
 import logger from '../utils/logger'
 import ChevronDownIcon from './icons/ChevronDownIcon'
 import LogoutIcon from './icons/LogoutIcon'
+import ExportImportPanel from './ExportImportPanel'
 import { PAGE_URL } from '@/constants/url'
 import { removeStorageItem, STORAGE_KEY } from '@/utils/storage'
+import { Message } from '@/types/message'
 
 interface UserProfileProps {
   userName?: string
   userEmail?: string
   avatarUrl?: string
   className?: string
+  messages?: Message[]
+  onImportHistory?: (messages: Message[]) => void
 }
 
 export default function UserProfile({
@@ -21,6 +25,8 @@ export default function UserProfile({
   userEmail,
   avatarUrl,
   className = '',
+  messages = [],
+  onImportHistory,
 }: UserProfileProps) {
   const { data: session, status } = useSession()
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
@@ -144,6 +150,26 @@ export default function UserProfile({
                 </p>
               )}
             </div>
+
+            {/* Chat History Section */}
+            <div className="border-b border-gray-200 dark:border-gray-700">
+              <div className="px-3 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                Chat History
+              </div>
+
+              {/* Export/Import Panel */}
+              <div className="px-3 py-2">
+                <ExportImportPanel
+                  messages={messages}
+                  userName={displayName}
+                  onImportHistory={importedMessages => {
+                    onImportHistory?.(importedMessages)
+                    setIsDropdownOpen(false)
+                  }}
+                />
+              </div>
+            </div>
+
             <div className="px-2 py-1">
               <button
                 onClick={handleSignOut}

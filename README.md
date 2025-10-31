@@ -14,6 +14,10 @@ A modern AI chatbot application built with Next.js 15 and powered by Google Gemi
 - 🔤 **Type Safety** - Full TypeScript implementation
 - 🧹 **Clear History** - Easy chat history management
 
+## Demo
+
+- [Link demo](https://*.vercel.app/login)
+
 ## 🚀 Quick Start
 
 ### Prerequisites

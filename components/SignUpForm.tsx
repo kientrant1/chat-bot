@@ -2,9 +2,11 @@
 
 import React, { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import GoogleIcon from './icons/GoogleIcon'
 import GitHubIcon from './icons/GitHubIcon'
 import OwlWatcher from './OwlWatcher'
+import logger from '@/utils/logger'
 
 interface SignUpFormProps {
   onSubmit?: (formData: {
@@ -21,6 +23,7 @@ export default function SignUpForm({
   onSubmit,
   onSocialLogin,
 }: SignUpFormProps) {
+  const router = useRouter()
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -62,7 +65,7 @@ export default function SignUpForm({
         await onSubmit(formData)
       } else {
         // Default behavior if no onSubmit prop provided
-        window.location.href = '/'
+        router.push('/')
       }
     } catch (err) {
       setError(
@@ -76,6 +79,7 @@ export default function SignUpForm({
   }
 
   const handleSocialLogin = (provider: 'google' | 'github') => {
+    logger.info('Social sign up clicked', { provider })
     if (onSocialLogin) {
       onSocialLogin(provider)
     } else {
@@ -232,41 +236,6 @@ export default function SignUpForm({
           {isLoading ? 'Creating account...' : 'Create account'}
         </button>
       </form>
-
-      {/* Divider */}
-      <div className="mt-6">
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-300 dark:border-gray-600" />
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">
-              Or sign up with
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Social Login Buttons */}
-      <div className="mt-6 grid grid-cols-2 gap-3">
-        <button
-          type="button"
-          onClick={() => handleSocialLogin('google')}
-          className="w-full inline-flex justify-center items-center py-3 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
-        >
-          <GoogleIcon className="w-5 h-5 mr-2" />
-          Google
-        </button>
-
-        <button
-          type="button"
-          onClick={() => handleSocialLogin('github')}
-          className="w-full inline-flex justify-center items-center py-3 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
-        >
-          <GitHubIcon className="w-5 h-5 mr-2" />
-          GitHub
-        </button>
-      </div>
     </div>
   )
 }
