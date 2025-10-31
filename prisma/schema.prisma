@@ -1,0 +1,84 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/* START: Models for Authentication*/
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  passwordHash  String?   // <- store hashed password, never plain
+
+  // relations
+  accounts Account[]
+  sessions Session[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+/* END: Models for Authentication*/
+
+/* CUSTOM: Models for other purposes*/
+model TermContent {
+  id             Int      @id @default(autoincrement())
+  // The type of document (e.g., "TERMS_OF_SERVICE", "PRIVACY_POLICY", "CHAT_TOS")
+  policyType     String
+  // A major version identifier (e.g., "1.0", "1.1", "2.0")
+  version        String
+  // The full text of the policy content
+  content        String   @db.Text // Use @db.Text or similar native type for large text fields
+  // Date the policy was officially published and went into effect
+  effectiveDate  DateTime
+  // Date the record was created in the database
+  createdAt      DateTime @default(now())
+  // Ensure only one content record exists for a specific version of a policyType
+  @@unique([policyType, version])
+}
+
+

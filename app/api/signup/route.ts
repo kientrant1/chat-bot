@@ -2,6 +2,68 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
 import logger from '@/utils/logger'
+import { prisma } from '@/lib/prisma'
+import bcrypt from 'bcrypt'
+
+const createFirebaseUser = async (
+  email: string,
+  name: string,
+  password: string
+) => {
+  // Create user with Firebase Auth
+  const userCredential = await createUserWithEmailAndPassword(
+    auth,
+    email,
+    password
+  )
+
+  const user = userCredential.user
+
+  // Update the user's display name
+  await updateProfile(user, {
+    displayName: name,
+  })
+
+  return user
+}
+
+const createPrismaUser = async (
+  email: string,
+  name: string,
+  password: string
+) => {
+  // check if email taken
+  const existing = await prisma.user.findUnique({
+    where: { email },
+  })
+
+  if (existing) {
+    throw new Error('Email is already in use')
+  }
+
+  // hash password
+  const passwordHash = await bcrypt.hash(password, 12)
+
+  // create user
+  const user = await prisma.user.create({
+    data: {
+      name,
+      email,
+      passwordHash,
+    },
+    select: {
+      id: true,
+      email: true,
+      name: true,
+    },
+  })
+
+  return {
+    uid: user.id,
+    email: user.email,
+    displayName: user.name,
+  }
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -32,19 +94,12 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Create user with Firebase Auth
-    const userCredential = await createUserWithEmailAndPassword(
-      auth,
-      email,
-      password
-    )
-
-    const user = userCredential.user
-
-    // Update the user's display name
-    await updateProfile(user, {
-      displayName: name,
-    })
+    let user
+    if (process.env.USE_PRISMA_AUTH === 'true') {
+      user = await createPrismaUser(email, name, password)
+    } else {
+      user = await createFirebaseUser(email, name, password)
+    }
 
     return NextResponse.json(
       {

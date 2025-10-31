@@ -1,20 +1,27 @@
 import { siteConfig } from '@/constants/siteConfig'
 import { PAGE_URL } from '@/constants/url'
+import { prisma } from '@/lib/prisma'
+import { PrismaAdapter } from '@next-auth/prisma-adapter'
 import NextAuth, { NextAuthOptions } from 'next-auth'
 import {
   firebaseCredentialsProvider,
   googleCredentialsProvider,
+  prismaCredentialsProvider,
 } from '@/lib/credentialsProvider'
 
 export const authOptions: NextAuthOptions = {
+  adapter: PrismaAdapter(prisma),
   // Configure one or more authentication providers
   providers: [
     googleCredentialsProvider,
-    firebaseCredentialsProvider,
+    process.env.USE_PRISMA_AUTH === 'true'
+      ? prismaCredentialsProvider
+      : firebaseCredentialsProvider,
     // ...add more providers here
   ],
   // NextAuth.js will generate a secret when NODEV_ENV is 'development'
   secret: siteConfig.auth.nextAuthSecret,
+  session: { strategy: 'jwt' },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {

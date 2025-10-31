@@ -1,4 +1,5 @@
 export const siteConfig = {
+  nextAppUrl: process.env.NEXT_PUBLIC_APP_URL ?? '',
   gemini: {
     apiKey: process.env.GEMINI_API_KEY!,
   },
