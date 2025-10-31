@@ -50,7 +50,12 @@ For local dev you can keep it super simple and use SQLite:
 In `.env`:
 
 ```
+# Use this if prisma/schema.prisma config `provider = "sqlite"`
 DATABASE_URL="file:./dev.db"
+
+# Use this if `provider = "postgresql"`
+# Value should be generated and copied from https://console.prisma.io/
+DATABASE_URL="prisma+postgres://accelerate.prisma-data.net/..."
 ```
 
 And in `prisma/schema.prisma`, make sure the top matches SQLite:
@@ -61,7 +66,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 ```
@@ -266,6 +271,16 @@ This is super handy for debugging NextAuth because you can log in with (say) Git
 That confirms the integration is working.
 
 ## 8. (Optional but important) How to read the session in your app
+
+### Some Other Command on Prisma
+
+```bash
+# Reset DB
+yarn prisma migrate reset
+
+# Deploy DB Changes (no need)
+yarn prisma migrate deploy
+```
 
 ### App Router server component / server action:
 
