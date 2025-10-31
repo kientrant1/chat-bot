@@ -7,6 +7,7 @@ import GoogleIcon from './icons/GoogleIcon'
 import GitHubIcon from './icons/GitHubIcon'
 import OwlWatcher from './OwlWatcher'
 import logger from '@/utils/logger'
+import { PAGE_URL } from '@/constants/url'
 
 interface SignUpFormProps {
   onSubmit?: (formData: {
@@ -211,17 +212,10 @@ export default function SignUpForm({
             <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
               I agree to the{' '}
               <Link
-                href="/terms"
+                href={PAGE_URL.TERM_CONDITION}
                 className="text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
               >
                 Terms and Conditions
-              </Link>{' '}
-              and{' '}
-              <Link
-                href="/privacy"
-                className="text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
-              >
-                Privacy Policy
               </Link>
             </span>
           </label>

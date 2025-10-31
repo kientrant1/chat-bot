@@ -91,3 +91,9 @@ export default function MarkdownRenderer({
     </div>
   )
 }
+
+export const OriginalMarkdownRenderer = ({
+  content,
+}: MarkdownRendererProps) => {
+  return <ReactMarkdown>{content}</ReactMarkdown>
+}

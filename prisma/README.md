@@ -137,7 +137,7 @@ Why this matters:
 Now generate the tables in your dev DB and generate the Prisma Client:
 
 ```bash
-yarn prisma migrate dev --name init_auth
+yarn prisma migrate dev --name [your_name] // i.e init_auth, create new term model
 ```
 
 That will:
