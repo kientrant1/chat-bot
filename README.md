@@ -16,14 +16,14 @@ A modern AI chatbot application built with Next.js 15 and powered by Google Gemi
 
 ## Demo
 
-- [Link demo](https://chat-bot-ten-ochre.vercel.app/login)
+- [Link demo](https://*.vercel.app/login)
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
 - Node.js 18.x or later
-- yarn, yarn, or pyarn package manager
+- yarn package manager
 - Google Gemini API key
 
 ### 1. Clone the Repository

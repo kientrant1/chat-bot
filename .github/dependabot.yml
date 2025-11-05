@@ -2,12 +2,12 @@ version: 2
 updates:
   - package-ecosystem: 'npm'
     directory: '/'
-    schedule: { interval: weekly }
+    schedule: { interval: monthly }
     groups:
       all-minor-patches:
         patterns: ['*']
         update-types: 
           - 'minor'
           - 'patch'
-    assignees:
-      - "kientrant1"
+    # assignees:
+    #   - "githubUsernameWithout@"
