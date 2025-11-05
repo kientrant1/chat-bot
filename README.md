@@ -68,13 +68,7 @@ GEMINI_API_KEY=your_gemini_api_key_here
 
 ```bash
 # Using yarn
-yarn run dev
-
-# Using yarn
 yarn dev
-
-# Using pyarn
-pyarn dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the chatbot in action.
