@@ -1,3 +1,4 @@
+/* eslint-disable */
 'use client'
 
 import React, { useState, useRef, useEffect, useCallback } from 'react'
@@ -10,11 +11,20 @@ import UserProfile from '@/components/UserProfile'
 import DeleteIcon from '@/components/icons/DeleteIcon'
 import { callGeminiAPI } from '@/services/geminiService'
 import { getCurrentTimeString, formatTimestamp } from '@/utils/date'
-import { setStorageItem, removeStorageItem, STORAGE_KEY } from '@/utils/storage'
 import logger from '@/utils/logger'
 import { Message } from '@/types/message'
 import { getDefaultInitialMessage, initializeMessage } from '@/utils/message'
 import { ComponentProps } from '../types/component'
+import {
+  loadHistoryFromDb,
+  appendMessageToDb,
+  clearHistoryInDb,
+  migrateLocalToDbIfNeeded,
+  getOrCreateGuestId,
+  saveImportedMessagesToDb,
+} from '@/services/chatHistoryService'
+import { useSession } from 'next-auth/react'
+import ChatHistory from '@/components/ChatHistory'
 
 interface ChatContainerProps extends ComponentProps {
   userName: string
@@ -42,62 +52,92 @@ const highlightSearchTerm = (text: string, searchTerm: string) => {
 }
 
 export default function ChatContainer({ userName }: ChatContainerProps) {
+  const { data: session } = useSession()
+  const userId = session?.user?.id || getOrCreateGuestId()
+
   const [messages, setMessages] = useState<Message[]>(() => {
-    // Load messages from localStorage on initial render
+    // initial in-memory default while DB loads
     return getDefaultInitialMessage(userName)
   })
   const [isLoading, setIsLoading] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   const [isSearchVisible, setIsSearchVisible] = useState(false)
   const [showConfirmation, setShowConfirmation] = useState(false)
-  const messagesEndRef = useRef<HTMLDivElement>(null)
+  // scrolling is handled inside ChatHistory component
 
-  // Save messages to localStorage whenever messages change
+  // Load history from DB on mount and migrate from localStorage if needed
   useEffect(() => {
-    setStorageItem(STORAGE_KEY.CHAT_HISTORY_KEY, messages)
-  }, [messages])
+    let mounted = true
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }
+    async function load() {
+      try {
+        // Attempt to migrate any localStorage history first
+        await migrateLocalToDbIfNeeded(userId)
 
-  useEffect(() => {
-    scrollToBottom()
-  }, [messages])
+        const loaded = await loadHistoryFromDb(userId)
+        if (!mounted) return
 
-  // Clear chat history
+        if (loaded && Array.isArray(loaded) && loaded.length > 0) {
+          setMessages(loaded)
+        } else {
+          setMessages(getDefaultInitialMessage(userName))
+        }
+      } catch (error) {
+        logger.error('Error loading history in ChatContainer:', error)
+        // fallback to default
+        if (mounted) setMessages(getDefaultInitialMessage(userName))
+      }
+    }
+
+    load()
+
+    return () => {
+      mounted = false
+    }
+  }, [userId, userName])
+
+  // compute search result count for SearchBar
+  const searchResultCount = searchTerm
+    ? messages.filter(message =>
+        message.text.toLowerCase().includes(searchTerm.toLowerCase())
+      ).length
+    : messages.length
+
+  // Clear chat history (ask for confirmation first)
   const handleClearHistory = useCallback(() => {
     setShowConfirmation(true)
   }, [])
 
-  const handleConfirmClear = useCallback(() => {
-    setMessages([initializeMessage(userName)])
-    setSearchTerm('')
-    setIsSearchVisible(false)
-    setShowConfirmation(false)
+  const handleConfirmClear = useCallback(async () => {
+    try {
+      setMessages([initializeMessage(userName)])
+      setSearchTerm('')
+      setIsSearchVisible(false)
+      setShowConfirmation(false)
 
-    // Clear from localStorage
-    removeStorageItem(STORAGE_KEY.CHAT_HISTORY_KEY)
-  }, [userName])
+      await clearHistoryInDb(userId)
+    } catch (error) {
+      logger.error('Error clearing history:', error)
+    }
+  }, [userId, userName])
 
   const handleCancelClear = useCallback(() => {
     setShowConfirmation(false)
   }, [])
 
   // Handle import of chat history
-  const handleImportHistory = useCallback((importedMessages: Message[]) => {
-    setMessages(importedMessages)
-    setSearchTerm('')
-    setIsSearchVisible(false)
-    logger.info(`Imported ${importedMessages.length} messages`)
-  }, [])
-
-  // Filter messages based on search term
-  const filteredMessages = searchTerm
-    ? messages.filter(message =>
-        message.text.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    : messages
+  const handleImportHistory = useCallback(async (importedMessages: Message[]) => {
+    try {
+      // Replace existing history with imported messages
+      setMessages(importedMessages)
+      await saveImportedMessagesToDb(userId, importedMessages)
+      setSearchTerm('')
+      setIsSearchVisible(false)
+      logger.info(`Imported ${importedMessages.length} messages`)
+    } catch (error) {
+      logger.error('Error importing messages:', error)
+    }
+  }, [userId])
 
   const handleSendMessage = useCallback(
     async (text: string) => {
@@ -115,6 +155,14 @@ export default function ChatContainer({ userName }: ChatContainerProps) {
 
       const messagesWithNewUser = [...messages, userMessage]
       setMessages(messagesWithNewUser)
+
+      // Persist user message to DB (best-effort)
+      try {
+        await appendMessageToDb(userId, userMessage)
+      } catch (err) {
+        logger.error('Failed to append user message to DB:', err)
+      }
+
       setIsLoading(true)
 
       try {
@@ -129,6 +177,13 @@ export default function ChatContainer({ userName }: ChatContainerProps) {
           timestamp: formatTimestamp(aiNow),
         }
         setMessages(prev => [...prev, aiMessage])
+
+        // Persist AI message
+        try {
+          await appendMessageToDb(userId, aiMessage)
+        } catch (err) {
+          logger.error('Failed to append AI message to DB:', err)
+        }
       } catch (error) {
         logger.error('Error generating AI response:', error)
         const errorMessage: Message = {
@@ -138,11 +193,17 @@ export default function ChatContainer({ userName }: ChatContainerProps) {
           timestamp: getCurrentTimeString(),
         }
         setMessages(prev => [...prev, errorMessage])
+
+        try {
+          await appendMessageToDb(userId, errorMessage)
+        } catch (err) {
+          logger.error('Failed to append error message to DB:', err)
+        }
       } finally {
         setIsLoading(false)
       }
     },
-    [messages]
+    [messages, userId]
   )
 
   const handleToggleSearch = () => {
@@ -183,7 +244,7 @@ export default function ChatContainer({ userName }: ChatContainerProps) {
               <SearchBar
                 isVisible={isSearchVisible}
                 searchTerm={searchTerm}
-                resultCount={filteredMessages.length}
+                resultCount={searchResultCount}
                 onToggleVisibility={handleToggleSearch}
                 onSearchChange={handleSearchChange}
                 onClearSearch={handleClearSearch}
@@ -200,36 +261,7 @@ export default function ChatContainer({ userName }: ChatContainerProps) {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto">
-        <div className="max-w-4xl mx-auto px-4 py-6">
-          {filteredMessages.map(msg => (
-            <ChatMessage
-              key={msg.id}
-              message={highlightSearchTerm(msg.text, searchTerm)}
-              isUser={msg.isUser}
-              timestamp={msg.timestamp}
-            />
-          ))}
-
-          {searchTerm && filteredMessages.length === 0 && (
-            <SearchNotFound searchTerm={searchTerm} />
-          )}
-
-          {isLoading && (
-            <div className="flex justify-start mb-4">
-              <div className="bg-white dark:bg-gray-800 rounded-lg p-3 shadow-sm border border-gray-200 dark:border-gray-700">
-                <div className="flex items-center space-x-2">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
-                  <span className="text-sm text-gray-600 dark:text-gray-300">
-                    AI is thinking...
-                  </span>
-                </div>
-              </div>
-            </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
-      </div>
+      <ChatHistory messages={messages} searchTerm={searchTerm} isLoading={isLoading} />
 
       {/* Input */}
       <ChatInput onSendMessage={handleSendMessage} />

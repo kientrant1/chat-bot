@@ -81,4 +81,18 @@ model TermContent {
   @@unique([policyType, version])
 }
 
+/* Chat history model: store individual chat messages per user */
+model ChatMessage {
+  id         String   @id @default(cuid())
+  userId     String
+  messageId  String
+  text       String   @db.Text
+  isUser     Boolean
+  timestamp  String
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([messageId])
+}
+
 

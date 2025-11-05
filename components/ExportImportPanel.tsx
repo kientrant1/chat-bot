@@ -5,7 +5,7 @@ import {
   downloadChatHistory,
   importChatHistory,
   readFileContent,
-} from '@/utils/chatHistory'
+} from '@/services/chatHistoryService'
 import { Message } from '@/types/message'
 import { useToast } from '@/context/ToastProvider'
 import logger from '@/utils/logger'
