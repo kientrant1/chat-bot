@@ -16,7 +16,7 @@ A modern AI chatbot application built with Next.js 15 and powered by Google Gemi
 
 ## Demo
 
-- [Link demo](https://*.vercel.app/login)
+- [Link demo](https://chat-bot-ten-ochre.vercel.app/login)
 
 ## 🚀 Quick Start
 
