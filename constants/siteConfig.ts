@@ -1,5 +1,7 @@
 export const siteConfig = {
   nextAppUrl: process.env.NEXT_PUBLIC_APP_URL ?? '',
+  maxChatRequestPerDay: 50,
+  geminiModelName: 'gemini-2.5-flash',
   gemini: {
     apiKey: process.env.GEMINI_API_KEY!,
   },

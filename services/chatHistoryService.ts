@@ -1,14 +1,13 @@
 import { Message } from '@/types/message'
 import logger from '../utils/logger'
-
-const CHAT_HISTORY_API = '/api/chat-history'
+import { API_URL } from '@/constants/url'
 
 export async function loadHistoryFromDb(
   userId: string
 ): Promise<Message[] | null> {
   try {
     const res = await fetch(
-      `${CHAT_HISTORY_API}?userId=${encodeURIComponent(userId)}`,
+      `${API_URL.CHAT_HISTORY}?userId=${encodeURIComponent(userId)}`,
       {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
@@ -33,7 +32,7 @@ export async function appendMessageToDb(
   message: Message
 ): Promise<boolean> {
   try {
-    const res = await fetch(CHAT_HISTORY_API, {
+    const res = await fetch(API_URL.CHAT_HISTORY, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userId, messages: [message], replace: false }),
@@ -54,7 +53,7 @@ export async function appendMessageToDb(
 export async function clearHistoryInDb(userId: string): Promise<boolean> {
   try {
     const res = await fetch(
-      `${CHAT_HISTORY_API}?userId=${encodeURIComponent(userId)}`,
+      `${API_URL.CHAT_HISTORY}?userId=${encodeURIComponent(userId)}`,
       {
         method: 'DELETE',
       }
@@ -78,7 +77,7 @@ export async function saveImportedMessagesToDb(
   messages: Message[]
 ) {
   try {
-    await fetch(CHAT_HISTORY_API, {
+    await fetch(API_URL.CHAT_HISTORY, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userId, messages, replace: true }),
@@ -94,7 +93,7 @@ export async function saveImportedMessagesToDb(
   replace = true
 ): Promise<boolean> => {
   try {
-    const res = await fetch(CHAT_HISTORY_API, {
+    const res = await fetch(API_URL.CHAT_HISTORY, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userId, messages, replace }),

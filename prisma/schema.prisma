@@ -57,6 +57,10 @@ model User {
   emailVerified DateTime?
   image         String?
   passwordHash  String?   // <- store hashed password, never plain
+  
+  // Daily request limit tracking
+  requestCount     Int      @default(0)
+  lastRequestDate  DateTime? // Track when the counter was last updated
 
   // relations - all use onDelete: Cascade to ensure cleanup when user is deleted
   accounts Account[]
