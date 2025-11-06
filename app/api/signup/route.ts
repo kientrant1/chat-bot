@@ -33,7 +33,7 @@ const createPrismaUser = async (
   const passwordHash = await bcrypt.hash(password, 12)
 
   // create user
-  const user = await prisma.user.create({
+  const user = await getPrisma().user.create({
     data: {
       name,
       email,

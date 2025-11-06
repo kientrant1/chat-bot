@@ -12,9 +12,12 @@
     "typecheck": "tsc --noEmit",
     "prepare": "husky",
     "prisma:init": "prisma init",
+    "prisma:generate": "prisma generate --no-engine",
     "prisma:studio": "prisma studio",
     "prisma:migrate": "prisma migrate dev --name",
-    "prisma:reset": "prisma migrate reset"
+    "prisma:reset": "prisma migrate reset",
+    "prebuild": "yarn prisma:generate",
+    "postinstall": "yarn prisma:generate"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
