@@ -12,7 +12,7 @@ const checkRateLimitChatRequest = async () => {
     // Get the user's session token
     const session = await getServerSession()
     // Check if user is authenticated
-    if (!session) {
+    if (!session || !session.user?.id) {
       return NextResponse.json(
         { error: 'Unauthorized. Please log in.' },
         { status: 401 }

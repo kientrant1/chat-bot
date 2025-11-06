@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
       const text = response.text()
 
       // Increment request count after successful response
-      increaseRequestCount(session?.user?.id || '')
+      await increaseRequestCount(session?.user?.id || '')
 
       return NextResponse.json({ response: text })
     }
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
     const text = response.text()
 
     // Increment request count after successful response
-    increaseRequestCount(session?.user?.id || '')
+    await increaseRequestCount(session?.user?.id || '')
 
     return NextResponse.json({ response: text })
   } catch (error) {
