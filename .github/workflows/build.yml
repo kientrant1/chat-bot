@@ -38,6 +38,9 @@ jobs:
 
       - name: Build application
         run: yarn build
+        env:
+          # Use the DATABASE_URL from GitHub Secrets
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4

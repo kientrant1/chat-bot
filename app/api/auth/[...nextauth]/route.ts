@@ -1,6 +1,6 @@
 import { siteConfig } from '@/constants/siteConfig'
 import { PAGE_URL } from '@/constants/url'
-import { prisma } from '@/lib/prisma'
+import { getPrisma } from '@/lib/prisma'
 import { PrismaAdapter } from '@next-auth/prisma-adapter'
 import NextAuth, { NextAuthOptions } from 'next-auth'
 import {
@@ -10,11 +10,11 @@ import {
 } from '@/lib/credentialsProvider'
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
+  adapter: PrismaAdapter(getPrisma()),
   // Configure one or more authentication providers
   providers: [
     googleCredentialsProvider,
-    process.env.USE_PRISMA_AUTH === 'true'
+    siteConfig.usePrismaAuth
       ? prismaCredentialsProvider
       : firebaseCredentialsProvider,
     // ...add more providers here

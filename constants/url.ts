@@ -7,6 +7,7 @@ export const PAGE_URL = {
 
 export const API_URL = {
   CHAT: '/api/chat',
+  CHAT_HISTORY: '/api/chat-history',
   TERMS: '/api/terms',
   SIGN_UP: '/api/signup',
 }

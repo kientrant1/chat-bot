@@ -1,25 +1,30 @@
+import { v4 as uuidv4 } from 'uuid'
 import { Message } from '@/types/message'
-import { getStorageItem, STORAGE_KEY } from './storage'
 import { getCurrentTimeString } from './date'
 import { ChatHistoryExport } from '@/types/history'
 import logger from './logger'
 
-// Default initial message
-export const initializeMessage = (userName: string): Message => ({
-  id: 'initial-1',
-  text: `Hello ${userName} ! I'm your AI assistant powered by Google Gemini. How can I help you today?`,
-  isUser: false,
-  timestamp: getCurrentTimeString(),
-})
+export const INITIAL_PREFIX = 'initial'
 
-export const getDefaultInitialMessage = (userName: string): Message[] => {
-  const savedMessages = getStorageItem<Message[]>(STORAGE_KEY.CHAT_HISTORY_KEY)
-  return savedMessages &&
-    Array.isArray(savedMessages) &&
-    savedMessages.length > 0
-    ? savedMessages
-    : [initializeMessage(userName)]
+export const generateMessageId = (isUser?: boolean): string => {
+  let prefix: string = ''
+  if (isUser === undefined) {
+    prefix = INITIAL_PREFIX
+  } else {
+    prefix = isUser ? 'user' : 'ai'
+  }
+  return `${prefix}-${uuidv4()}`
 }
+
+// Default initial message
+export const getInitializeMessage = (userName: string): Message[] => [
+  {
+    messageId: generateMessageId(),
+    text: `Hello ${userName} ! I'm your AI assistant powered by Google Gemini. How can I help you today?`,
+    isUser: false,
+    timestamp: getCurrentTimeString(),
+  },
+]
 
 /**
  * Export chat history to JSON format
@@ -100,16 +105,18 @@ const validateChatHistoryImport = (
     }
 
     const parsedData = data as Record<string, unknown>
+    const userName = parsedData.userName as string
+    const messages = parsedData.messages as Message[]
 
     // Check for required fields
-    if (!parsedData.messages || !Array.isArray(parsedData.messages)) {
+    if (!messages || !Array.isArray(messages)) {
       return { isValid: false, error: 'No messages found in the file' }
     }
 
     // Validate message structure
-    for (const message of parsedData.messages) {
+    for (const message of messages) {
       if (
-        !message.id ||
+        !message.messageId ||
         !message.text ||
         typeof message.isUser !== 'boolean' ||
         !message.timestamp
@@ -120,8 +127,8 @@ const validateChatHistoryImport = (
 
     return {
       isValid: true,
-      messages: parsedData.messages as Message[],
-      userName: (parsedData.userName as string) || 'Unknown User',
+      messages: messages as Message[],
+      userName: userName || 'Unknown User',
     }
   } catch (error) {
     logger.error('Error validating chat history import:', error)

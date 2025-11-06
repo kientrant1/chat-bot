@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { getPrisma } from '@/lib/prisma'
 import logger from '@/utils/logger'
-import { Message } from '@/types/message'
+import { ChatMessage, Message } from '@/types/message'
 
 export async function GET(request: NextRequest) {
   try {
@@ -12,13 +12,13 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'userId is required' }, { status: 400 })
     }
 
-    const records = await prisma.chatMessage.findMany({
+    const records = await getPrisma().chatMessage.findMany({
       where: { userId },
       orderBy: { createdAt: 'asc' },
     })
 
-    const messages: Message[] = records.map(r => ({
-      id: r.messageId,
+    const messages: Message[] = records.map((r: ChatMessage) => ({
+      messageId: r.messageId,
       text: r.text,
       isUser: r.isUser,
       timestamp: r.timestamp,
@@ -56,20 +56,20 @@ export async function POST(request: NextRequest) {
 
     if (replace) {
       // delete existing messages for user
-      await prisma.chatMessage.deleteMany({ where: { userId } })
+      await getPrisma().chatMessage.deleteMany({ where: { userId } })
     }
 
     // Bulk create messages
-    const toCreate = messages.map(m => ({
+    const toCreate = messages.map((m: Message) => ({
       userId,
-      messageId: m.id,
+      messageId: m.messageId,
       text: m.text,
       isUser: m.isUser,
       timestamp: m.timestamp,
     }))
 
     if (toCreate.length > 0) {
-      await prisma.chatMessage.createMany({
+      await getPrisma().chatMessage.createMany({
         data: toCreate,
         skipDuplicates: true,
       })
@@ -94,7 +94,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'userId is required' }, { status: 400 })
     }
 
-    await prisma.chatMessage.deleteMany({ where: { userId } })
+    await getPrisma().chatMessage.deleteMany({ where: { userId } })
 
     return NextResponse.json({ success: true })
   } catch (error) {

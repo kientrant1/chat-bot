@@ -1,9 +1,10 @@
 import logger from '@/utils/logger'
 import { Message } from '@/types/message'
+import { API_URL } from '@/constants/url'
 
 export const callGeminiAPI = async (messages: Message[]): Promise<string> => {
   try {
-    const response = await fetch('/api/chat', {
+    const response = await fetch(API_URL.CHAT, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -3,7 +3,7 @@ import GoogleProvider from 'next-auth/providers/google'
 import logger from '@/utils/logger'
 import { siteConfig } from '@/constants/siteConfig'
 import bcrypt from 'bcrypt'
-import { prisma } from './prisma'
+import { getPrisma } from './prisma'
 import { signInWithEmailAndPassword } from './firebase'
 
 export const googleCredentialsProvider = GoogleProvider({
@@ -79,7 +79,7 @@ export const prismaCredentialsProvider = CredentialsProvider({
     }
 
     try {
-      const user = await prisma.user.findUnique({
+      const user = await getPrisma().user.findUnique({
         where: { email: credentials.email },
       })
 

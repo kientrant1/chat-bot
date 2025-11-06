@@ -9,10 +9,15 @@
     "lint": "eslint",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
     "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
+    "typecheck": "tsc --noEmit",
     "prepare": "husky",
     "prisma:init": "prisma init",
+    "prisma:generate": "prisma generate --no-engine",
     "prisma:studio": "prisma studio",
-    "prisma:migrate": "prisma migrate dev --name"
+    "prisma:migrate": "prisma migrate dev --name",
+    "prisma:reset": "prisma migrate reset",
+    "prebuild": "yarn prisma:generate",
+    "postinstall": "yarn prisma:generate"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
@@ -26,7 +31,8 @@
     "react-dom": "^19.2.0",
     "react-markdown": "^10.1.0",
     "rehype-highlight": "^7.0.2",
-    "remark-gfm": "^4.0.1"
+    "remark-gfm": "^4.0.1",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

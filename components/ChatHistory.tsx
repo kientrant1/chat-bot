@@ -55,8 +55,9 @@ export default function ChatHistory({
       <div className="max-w-4xl mx-auto px-4 py-6">
         {filteredMessages.map(msg => (
           <ChatMessage
-            key={msg.id}
+            key={msg.messageId}
             message={highlightSearchTerm(msg.text, searchTerm)}
+            messageId={msg.messageId}
             isUser={msg.isUser}
             timestamp={msg.timestamp}
           />
