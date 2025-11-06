@@ -6,6 +6,7 @@ import MarkdownRenderer from './MarkdownRenderer'
 
 interface ChatMessageProps extends ComponentProps {
   message: string | React.ReactNode
+  messageId: string
   isUser: boolean
   timestamp: string
 }
@@ -26,6 +27,7 @@ const MessageContent = ({ message, isUser }: MessageContentProps) => {
 
 export default function ChatMessage({
   message,
+  messageId,
   isUser,
   timestamp,
   className,
@@ -35,7 +37,7 @@ export default function ChatMessage({
   return (
     <div
       className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4 ${className || ''}`}
-      data-testid={testId}
+      data-testid={`${testId}-${messageId}`}
       {...props}
     >
       <div

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import logger from '@/utils/logger'
-import { Message } from '@/types/message'
+import { ChatMessage, Message } from '@/types/message'
 
 export async function GET(request: NextRequest) {
   try {
@@ -17,8 +17,8 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: 'asc' },
     })
 
-    const messages: Message[] = records.map(r => ({
-      id: r.messageId,
+    const messages: Message[] = records.map((r: ChatMessage) => ({
+      messageId: r.messageId,
       text: r.text,
       isUser: r.isUser,
       timestamp: r.timestamp,
@@ -60,9 +60,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Bulk create messages
-    const toCreate = messages.map(m => ({
+    const toCreate = messages.map((m: Message) => ({
       userId,
-      messageId: m.id,
+      messageId: m.messageId,
       text: m.text,
       isUser: m.isUser,
       timestamp: m.timestamp,

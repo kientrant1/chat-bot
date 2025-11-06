@@ -80,7 +80,11 @@ export async function saveImportedMessagesToDb(
     await fetch(API_URL.CHAT_HISTORY, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userId, messages, replace: true }),
+      body: JSON.stringify({
+        userId,
+        messages,
+        replace: true, // override all messages
+      }),
     })
   } catch (error) {
     logger.error('Error saving imported messages to DB:', error)

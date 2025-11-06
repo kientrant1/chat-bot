@@ -8,6 +8,8 @@ import {
   getRemainingRequests,
   incrementRequestCount,
 } from '@/functions/rateLimit'
+import { Message } from '@/types/message'
+import { INITIAL_PREFIX } from '@/utils/message'
 
 const genAI = new GoogleGenerativeAI(siteConfig.gemini.apiKey)
 
@@ -26,7 +28,7 @@ export async function POST(request: NextRequest) {
     // Middleware already checked auth and rate limit, just get session for user ID
     const session = await getServerSession(authOptions)
 
-    const { messages } = await request.json()
+    const messages: Message[] = (await request.json()).messages
 
     if (!messages || !Array.isArray(messages) || messages.length === 0) {
       return NextResponse.json(
@@ -47,7 +49,9 @@ export async function POST(request: NextRequest) {
 
     // Convert messages to Gemini chat format
     // Filter out the initial AI message and only include actual conversation
-    const conversationMessages = messages.filter(msg => msg.id !== 'initial-1')
+    const conversationMessages = messages.filter((msg: Message) =>
+      msg.messageId.startsWith(INITIAL_PREFIX)
+    )
 
     if (conversationMessages.length === 0) {
       // If no conversation yet, just use the last message

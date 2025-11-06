@@ -10,7 +10,7 @@ import { callGeminiAPI } from '@/services/geminiService'
 import { getCurrentTimeString, formatTimestamp } from '@/utils/date'
 import logger from '@/utils/logger'
 import { Message } from '@/types/message'
-import { getDefaultInitialMessage, initializeMessage } from '@/utils/message'
+import { generateMessageId, getInitializeMessage } from '@/utils/message'
 import { ComponentProps } from '../types/component'
 import {
   loadHistoryFromDb,
@@ -32,7 +32,7 @@ export default function ChatContainer({ userName }: ChatContainerProps) {
 
   const [messages, setMessages] = useState<Message[]>(() => {
     // initial in-memory default while DB loads
-    return getDefaultInitialMessage(userName)
+    return getInitializeMessage(userName)
   })
   const [isLoading, setIsLoading] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
@@ -54,12 +54,10 @@ export default function ChatContainer({ userName }: ChatContainerProps) {
         if (loaded && Array.isArray(loaded) && loaded.length > 0) {
           setMessages(loaded)
         } else {
-          setMessages(getDefaultInitialMessage(userName))
+          setMessages(getInitializeMessage(userName))
         }
       } catch (error) {
         logger.error('Error loading history in ChatContainer:', error)
-        // fallback to default
-        if (mounted) setMessages(getDefaultInitialMessage(userName))
       }
     }
 
@@ -84,7 +82,7 @@ export default function ChatContainer({ userName }: ChatContainerProps) {
 
   const handleConfirmClear = useCallback(async () => {
     try {
-      setMessages([initializeMessage(userName)])
+      setMessages(getInitializeMessage(userName))
       setSearchTerm('')
       setIsSearchVisible(false)
       setShowConfirmation(false)
@@ -124,7 +122,7 @@ export default function ChatContainer({ userName }: ChatContainerProps) {
 
       const now = Date.now()
       const userMessage: Message = {
-        id: `user-${now}`,
+        messageId: generateMessageId(true),
         text,
         isUser: true,
         timestamp: formatTimestamp(now),
@@ -148,7 +146,7 @@ export default function ChatContainer({ userName }: ChatContainerProps) {
 
         const aiNow = Date.now()
         const aiMessage: Message = {
-          id: `ai-${aiNow}`,
+          messageId: generateMessageId(false),
           text: aiResponse,
           isUser: false,
           timestamp: formatTimestamp(aiNow),
@@ -164,7 +162,7 @@ export default function ChatContainer({ userName }: ChatContainerProps) {
       } catch (error) {
         logger.error('Error generating AI response:', error)
         const errorMessage: Message = {
-          id: `error-${Date.now()}`,
+          messageId: `error-${Date.now()}`,
           text: "I'm sorry, I encountered an error. Please try again.",
           isUser: false,
           timestamp: getCurrentTimeString(),
