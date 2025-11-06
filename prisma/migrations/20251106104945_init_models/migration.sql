@@ -33,6 +33,9 @@ CREATE TABLE "User" (
     "email" TEXT,
     "emailVerified" TIMESTAMP(3),
     "image" TEXT,
+    "passwordHash" TEXT,
+    "requestCount" INTEGER NOT NULL DEFAULT 0,
+    "lastRequestDate" TIMESTAMP(3),
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
@@ -42,6 +45,31 @@ CREATE TABLE "VerificationToken" (
     "identifier" TEXT NOT NULL,
     "token" TEXT NOT NULL,
     "expires" TIMESTAMP(3) NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "TermContent" (
+    "id" SERIAL NOT NULL,
+    "policyType" TEXT NOT NULL,
+    "version" TEXT NOT NULL,
+    "content" TEXT NOT NULL,
+    "effectiveDate" TIMESTAMP(3) NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "TermContent_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "ChatMessage" (
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "messageId" TEXT NOT NULL,
+    "text" TEXT NOT NULL,
+    "isUser" BOOLEAN NOT NULL,
+    "timestamp" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "ChatMessage_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -59,8 +87,20 @@ CREATE UNIQUE INDEX "VerificationToken_token_key" ON "VerificationToken"("token"
 -- CreateIndex
 CREATE UNIQUE INDEX "VerificationToken_identifier_token_key" ON "VerificationToken"("identifier", "token");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "TermContent_policyType_version_key" ON "TermContent"("policyType", "version");
+
+-- CreateIndex
+CREATE INDEX "ChatMessage_userId_idx" ON "ChatMessage"("userId");
+
+-- CreateIndex
+CREATE INDEX "ChatMessage_messageId_idx" ON "ChatMessage"("messageId");
+
 -- AddForeignKey
 ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ChatMessage" ADD CONSTRAINT "ChatMessage_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
