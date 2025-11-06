@@ -2,6 +2,7 @@ export const siteConfig = {
   nextAppUrl: process.env.NEXT_PUBLIC_APP_URL ?? '',
   maxChatRequestPerDay: 50,
   geminiModelName: 'gemini-2.5-flash',
+  usePrismaAuth: process.env.USE_PRISMA_AUTH === 'true',
   gemini: {
     apiKey: process.env.GEMINI_API_KEY!,
   },

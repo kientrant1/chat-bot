@@ -14,7 +14,7 @@ export const authOptions: NextAuthOptions = {
   // Configure one or more authentication providers
   providers: [
     googleCredentialsProvider,
-    process.env.USE_PRISMA_AUTH === 'true'
+    siteConfig.usePrismaAuth
       ? prismaCredentialsProvider
       : firebaseCredentialsProvider,
     // ...add more providers here

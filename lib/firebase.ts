@@ -1,10 +1,11 @@
 import { siteConfig } from '@/constants/siteConfig'
-import { initializeApp } from 'firebase/app'
+import { initializeApp, type FirebaseApp, getApps } from 'firebase/app'
 import {
   createUserWithEmailAndPassword as createUserWithEmailAndPwd,
   getAuth,
   signInWithEmailAndPassword as signInWithEmailAndPwd,
   updateProfile,
+  type Auth,
 } from 'firebase/auth'
 
 const firebaseConfig = {
@@ -14,15 +15,33 @@ const firebaseConfig = {
   appId: siteConfig.firebase.appId,
 }
 
-const app = initializeApp(firebaseConfig)
-const auth = getAuth(app)
+// Lazy initialization - only initialize when actually needed
+const getFirebaseApp = () => {
+  let app: FirebaseApp | undefined
+  // Check if Firebase is already initialized
+  if (getApps().length === 0) {
+    app = initializeApp(firebaseConfig)
+  } else {
+    app = getApps()[0]
+  }
+  return app
+}
+
+const getFirebaseAuth = () => {
+  return getAuth(getFirebaseApp())
+}
 
 export const createUserWithEmailAndPassword = async (
   email: string,
   password: string,
   name: string
 ) => {
-  const userCredential = await createUserWithEmailAndPwd(auth, email, password)
+  const authInstance = getFirebaseAuth()
+  const userCredential = await createUserWithEmailAndPwd(
+    authInstance,
+    email,
+    password
+  )
   const user = userCredential.user
 
   // Update the user's display name
@@ -37,5 +56,6 @@ export const signInWithEmailAndPassword = async (
   email: string,
   password: string
 ) => {
-  return await signInWithEmailAndPwd(auth, email, password)
+  const authInstance = getFirebaseAuth()
+  return await signInWithEmailAndPwd(authInstance, email, password)
 }
