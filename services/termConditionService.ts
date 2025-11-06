@@ -1,9 +1,10 @@
 import { siteConfig } from '@/constants/siteConfig'
+import { API_URL } from '@/constants/url'
 import logger from '@/utils/logger'
 
 export const getTermContent = async (isSSG: boolean): Promise<string> => {
   try {
-    const response = await fetch(`${siteConfig.nextAppUrl}/api/terms`, {
+    const response = await fetch(`${siteConfig.nextAppUrl}${API_URL.TERMS}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
