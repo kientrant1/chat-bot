@@ -1,11 +1,8 @@
-/* eslint-disable */
 'use client'
 
-import React, { useState, useRef, useEffect, useCallback } from 'react'
-import ChatMessage from '@/components/ChatMessage'
+import React, { useState, useEffect, useCallback } from 'react'
 import ChatInput from '@/components/ChatInput'
 import SearchBar from '@/components/SearchBar'
-import SearchNotFound from '@/components/SearchNotFound'
 import Confirmation from '@/components/Confirmation'
 import UserProfile from '@/components/UserProfile'
 import DeleteIcon from '@/components/icons/DeleteIcon'
@@ -19,36 +16,14 @@ import {
   loadHistoryFromDb,
   appendMessageToDb,
   clearHistoryInDb,
-  migrateLocalToDbIfNeeded,
-  getOrCreateGuestId,
   saveImportedMessagesToDb,
 } from '@/services/chatHistoryService'
 import { useSession } from 'next-auth/react'
 import ChatHistory from '@/components/ChatHistory'
+import { getOrCreateGuestId } from '@/utils/user'
 
 interface ChatContainerProps extends ComponentProps {
   userName: string
-}
-
-// Highlight search term if matching words or phrases in history chat
-const highlightSearchTerm = (text: string, searchTerm: string) => {
-  if (!searchTerm) return text
-
-  const regex = new RegExp(`(${searchTerm})`, 'gi')
-  const parts = text.split(regex)
-
-  return parts.map((part, index) =>
-    regex.test(part) ? (
-      <span
-        key={index}
-        className="bg-yellow-200 dark:bg-yellow-600 px-1 rounded"
-      >
-        {part}
-      </span>
-    ) : (
-      part
-    )
-  )
 }
 
 export default function ChatContainer({ userName }: ChatContainerProps) {
@@ -63,7 +38,6 @@ export default function ChatContainer({ userName }: ChatContainerProps) {
   const [searchTerm, setSearchTerm] = useState('')
   const [isSearchVisible, setIsSearchVisible] = useState(false)
   const [showConfirmation, setShowConfirmation] = useState(false)
-  // scrolling is handled inside ChatHistory component
 
   // Load history from DB on mount and migrate from localStorage if needed
   useEffect(() => {
@@ -72,10 +46,10 @@ export default function ChatContainer({ userName }: ChatContainerProps) {
     async function load() {
       try {
         // Attempt to migrate any localStorage history first
-        await migrateLocalToDbIfNeeded(userId)
+        // await migrateLocalToDbIfNeeded(userId)
 
-        const loaded = await loadHistoryFromDb(userId)
         if (!mounted) return
+        const loaded = await loadHistoryFromDb(userId)
 
         if (loaded && Array.isArray(loaded) && loaded.length > 0) {
           setMessages(loaded)
@@ -126,18 +100,21 @@ export default function ChatContainer({ userName }: ChatContainerProps) {
   }, [])
 
   // Handle import of chat history
-  const handleImportHistory = useCallback(async (importedMessages: Message[]) => {
-    try {
-      // Replace existing history with imported messages
-      setMessages(importedMessages)
-      await saveImportedMessagesToDb(userId, importedMessages)
-      setSearchTerm('')
-      setIsSearchVisible(false)
-      logger.info(`Imported ${importedMessages.length} messages`)
-    } catch (error) {
-      logger.error('Error importing messages:', error)
-    }
-  }, [userId])
+  const handleImportHistory = useCallback(
+    async (importedMessages: Message[]) => {
+      try {
+        // Replace existing history with imported messages
+        setMessages(importedMessages)
+        await saveImportedMessagesToDb(userId, importedMessages)
+        setSearchTerm('')
+        setIsSearchVisible(false)
+        logger.info(`Imported ${importedMessages.length} messages`)
+      } catch (error) {
+        logger.error('Error importing messages:', error)
+      }
+    },
+    [userId]
+  )
 
   const handleSendMessage = useCallback(
     async (text: string) => {
@@ -261,7 +238,11 @@ export default function ChatContainer({ userName }: ChatContainerProps) {
       </div>
 
       {/* Messages */}
-      <ChatHistory messages={messages} searchTerm={searchTerm} isLoading={isLoading} />
+      <ChatHistory
+        messages={messages}
+        searchTerm={searchTerm}
+        isLoading={isLoading}
+      />
 
       {/* Input */}
       <ChatInput onSendMessage={handleSendMessage} />

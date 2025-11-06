@@ -40,6 +40,7 @@ export default function ChatHistory({
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    // scrolling is handled inside ChatHistory component
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 

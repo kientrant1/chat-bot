@@ -57,7 +57,7 @@ export default function LoginForm({ onSubmit, onSocialLogin }: LoginFormProps) {
       onSocialLogin(provider)
     } else {
       // Default behavior
-      console.log(`Login with ${provider}`)
+      logger.info(`Login with ${provider}`)
     }
   }
 
