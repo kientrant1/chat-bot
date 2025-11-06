@@ -9,7 +9,10 @@
     "lint": "eslint",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
     "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
-    "prepare": "husky"
+    "prepare": "husky",
+    "prisma:init": "prisma init",
+    "prisma:studio": "prisma studio",
+    "prisma:migrate": "prisma migrate dev --name"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

@@ -14,6 +14,9 @@ datasource db {
 }
 
 /* START: Models for Authentication*/
+
+// Account model: stores OAuth provider accounts linked to users
+// When a user is deleted, all their linked accounts are automatically deleted (onDelete: Cascade)
 model Account {
   id                String  @id @default(cuid())
   userId            String
@@ -28,20 +31,25 @@ model Account {
   id_token          String?
   session_state     String?
 
+  // Cascade delete: when user is deleted, all their accounts are deleted
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
 
+// Session model: stores active user sessions
+// When a user is deleted, all their sessions are automatically deleted (onDelete: Cascade)
 model Session {
   id           String   @id @default(cuid())
   sessionToken String   @unique
   userId       String
   expires      DateTime
 
+  // Cascade delete: when user is deleted, all their sessions are deleted
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+// User model: store user information
 model User {
   id            String    @id @default(cuid())
   name          String?
@@ -50,9 +58,10 @@ model User {
   image         String?
   passwordHash  String?   // <- store hashed password, never plain
 
-  // relations
+  // relations - all use onDelete: Cascade to ensure cleanup when user is deleted
   accounts Account[]
   sessions Session[]
+  chatMessages ChatMessage[]
 }
 
 model VerificationToken {
@@ -79,6 +88,23 @@ model TermContent {
   createdAt      DateTime @default(now())
   // Ensure only one content record exists for a specific version of a policyType
   @@unique([policyType, version])
+}
+
+/* Chat history model: store individual chat messages per user */
+model ChatMessage {
+  id         String   @id @default(cuid())
+  userId     String
+  messageId  String
+  text       String   @db.Text
+  isUser     Boolean
+  timestamp  String
+  createdAt  DateTime @default(now())
+
+  // Cascade delete: when user is deleted, all their chat messages are deleted
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([messageId])
 }
 
 

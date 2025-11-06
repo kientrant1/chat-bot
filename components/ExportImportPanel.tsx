@@ -1,14 +1,11 @@
 import React, { useRef, useState } from 'react'
 import ExportIcon from '@/components/icons/ExportIcon'
 import ImportIcon from '@/components/icons/ImportIcon'
-import {
-  downloadChatHistory,
-  importChatHistory,
-  readFileContent,
-} from '@/utils/chatHistory'
 import { Message } from '@/types/message'
 import { useToast } from '@/context/ToastProvider'
 import logger from '@/utils/logger'
+import { readFileContent } from '@/utils/file'
+import { downloadChatHistory, importChatHistory } from '@/utils/message'
 
 interface ExportImportPanelProps {
   messages: Message[]

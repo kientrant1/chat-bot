@@ -79,16 +79,6 @@ export default function SignUpForm({
     }
   }
 
-  const handleSocialLogin = (provider: 'google' | 'github') => {
-    logger.info('Social sign up clicked', { provider })
-    if (onSocialLogin) {
-      onSocialLogin(provider)
-    } else {
-      // Default behavior
-      console.log(`Sign up with ${provider}`)
-    }
-  }
-
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8">
       {/* Friendly Owl */}
