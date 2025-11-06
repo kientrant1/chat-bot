@@ -1,5 +1,5 @@
 import { siteConfig } from '@/constants/siteConfig'
-import { prisma } from '@/lib/prisma'
+import { getPrisma } from '@/lib/prisma'
 import { calculateRemainingRequests, isNotRequestedToday } from '@/utils/chat'
 import logger from '@/utils/logger'
 
@@ -18,7 +18,7 @@ const resetLimitRateCounter = async (user: {
 }) => {
   // Check if it's a new day - reset counter
   if (isNotRequestedToday(user.lastRequestDate)) {
-    await prisma.user.update({
+    await getPrisma().user.update({
       where: { id: user.id },
       data: {
         requestCount: 0,
@@ -39,7 +39,7 @@ const resetLimitRateCounter = async (user: {
 export async function checkDailyLimit(
   userId: string
 ): Promise<{ isValidRateLimit: boolean; remaining: number }> {
-  const user = await prisma.user.findUnique({
+  const user = await getPrisma().user.findUnique({
     where: { id: userId },
     select: { id: true, requestCount: true, lastRequestDate: true },
   })
@@ -68,7 +68,7 @@ export async function checkDailyLimit(
  * @param userId - The user's ID
  */
 export async function incrementRequestCount(userId: string): Promise<void> {
-  await prisma.user.update({
+  await getPrisma().user.update({
     where: { id: userId },
     data: {
       requestCount: { increment: 1 },
@@ -83,7 +83,7 @@ export async function incrementRequestCount(userId: string): Promise<void> {
  * @returns The number of requests remaining
  */
 export async function getRemainingRequests(userId: string): Promise<number> {
-  const user = await prisma.user.findUnique({
+  const user = await getPrisma().user.findUnique({
     where: { id: userId },
     select: { requestCount: true, lastRequestDate: true },
   })

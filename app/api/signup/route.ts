@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import logger from '@/utils/logger'
-import { prisma } from '@/lib/prisma'
+import { getPrisma } from '@/lib/prisma'
 import bcrypt from 'bcrypt'
 import { createUserWithEmailAndPassword } from '@/lib/firebase'
 import { siteConfig } from '@/constants/siteConfig'
@@ -21,7 +21,7 @@ const createPrismaUser = async (
   password: string
 ) => {
   // check if email taken
-  const existing = await prisma.user.findUnique({
+  const existing = await getPrisma().user.findUnique({
     where: { email },
   })
 

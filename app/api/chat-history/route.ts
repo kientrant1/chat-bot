@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { getPrisma } from '@/lib/prisma'
 import logger from '@/utils/logger'
 import { ChatMessage, Message } from '@/types/message'
 
@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'userId is required' }, { status: 400 })
     }
 
-    const records = await prisma.chatMessage.findMany({
+    const records = await getPrisma().chatMessage.findMany({
       where: { userId },
       orderBy: { createdAt: 'asc' },
     })
@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
 
     if (replace) {
       // delete existing messages for user
-      await prisma.chatMessage.deleteMany({ where: { userId } })
+      await getPrisma().chatMessage.deleteMany({ where: { userId } })
     }
 
     // Bulk create messages
@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
     }))
 
     if (toCreate.length > 0) {
-      await prisma.chatMessage.createMany({
+      await getPrisma().chatMessage.createMany({
         data: toCreate,
         skipDuplicates: true,
       })
@@ -94,7 +94,7 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'userId is required' }, { status: 400 })
     }
 
-    await prisma.chatMessage.deleteMany({ where: { userId } })
+    await getPrisma().chatMessage.deleteMany({ where: { userId } })
 
     return NextResponse.json({ success: true })
   } catch (error) {

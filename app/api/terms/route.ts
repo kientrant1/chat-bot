@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/prisma'
+import { getPrisma } from '@/lib/prisma'
 import { getServerSession } from '@/utils/auth'
 import logger from '@/utils/logger'
 import { NextRequest, NextResponse } from 'next/server'
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
       throw new Error('Invalid date format')
     }
 
-    const newTerm = await prisma.termContent.create({
+    const newTerm = await getPrisma().termContent.create({
       data: {
         policyType: policyType,
         version: version,
@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   try {
-    const terms = await prisma.termContent.findMany({
+    const terms = await getPrisma().termContent.findMany({
       // Optional: order by policy type and then by effective date descending
       orderBy: [{ policyType: 'asc' }, { effectiveDate: 'desc' }],
       // Optional: select specific fields to keep the payload small
