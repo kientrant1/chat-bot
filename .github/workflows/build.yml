@@ -10,6 +10,12 @@ jobs:
   build:
     name: Build and Lint
     runs-on: ubuntu-latest
+    # environment: Preview # Specific environment for the job
+    
+    # Add DATABASE_URL globally for all steps in this job
+    # Use env.DATABASE_URL if needed in each steps
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
     strategy:
       matrix:
@@ -29,6 +35,9 @@ jobs:
 
       - name: Install dependencies
         run: yarn install
+        # References the job-level env
+        # env:
+        #   DATABASE_URL: ${{ env.DATABASE_URL }}
 
       - name: Run ESLint
         run: yarn lint
@@ -38,9 +47,9 @@ jobs:
 
       - name: Build application
         run: yarn build
-        env:
-          # Use the DATABASE_URL from GitHub Secrets
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        # References the job-level env
+        # env:
+        #   DATABASE_URL: ${{ env.DATABASE_URL }}
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
