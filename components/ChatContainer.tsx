@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useSession } from 'next-auth/react'
-import { ChatHistory, ChatInput } from 'snackact-ui'
+import dynamic from 'next/dynamic'
 import { DeleteIcon } from 'snackact-ui/icons'
 import SearchBar from '@/components/SearchBar'
 import Confirmation from '@/components/Confirmation'
@@ -20,6 +20,20 @@ import {
   saveImportedMessagesToDb,
 } from '@/services/chatHistoryService'
 import { getOrCreateGuestId } from '@/utils/user'
+
+const ChatHistory = dynamic(
+  () => import('snackact-ui').then(mod => mod.ChatHistory),
+  {
+    ssr: false,
+  }
+)
+
+const ChatInput = dynamic(
+  () => import('snackact-ui').then(mod => mod.ChatInput),
+  {
+    ssr: false,
+  }
+)
 
 interface ChatContainerProps extends ComponentProps {
   userName: string
