@@ -26,6 +26,18 @@ interface ChatContainerProps extends ComponentProps {
   userName: string
 }
 
+const appendCurrentMessageToDB = async (
+  userId: string,
+  errorMessage: Message,
+  type: 'user' | 'ai' | 'error'
+) => {
+  try {
+    await appendMessageToDb(userId, errorMessage)
+  } catch (err) {
+    logger.error(`Failed to append ${type} message to DB:`, err)
+  }
+}
+
 export default function ChatContainer({ userName }: ChatContainerProps) {
   const { data: session } = useSession()
   const userId = session?.user?.id || getOrCreateGuestId()
@@ -130,15 +142,10 @@ export default function ChatContainer({ userName }: ChatContainerProps) {
 
       const messagesWithNewUser = [...messages, userMessage]
       setMessages(messagesWithNewUser)
+      setIsLoading(true)
 
       // Persist user message to DB (best-effort)
-      try {
-        await appendMessageToDb(userId, userMessage)
-      } catch (err) {
-        logger.error('Failed to append user message to DB:', err)
-      }
-
-      setIsLoading(true)
+      appendCurrentMessageToDB(userId, userMessage, 'user')
 
       try {
         // Call Gemini API with full conversation history
@@ -153,12 +160,8 @@ export default function ChatContainer({ userName }: ChatContainerProps) {
         }
         setMessages(prev => [...prev, aiMessage])
 
-        // Persist AI message
-        try {
-          await appendMessageToDb(userId, aiMessage)
-        } catch (err) {
-          logger.error('Failed to append AI message to DB:', err)
-        }
+        // Persist AI message to DB
+        appendCurrentMessageToDB(userId, aiMessage, 'ai')
       } catch (error) {
         logger.error('Error generating AI response:', error)
         const errorMessage: Message = {
@@ -169,11 +172,8 @@ export default function ChatContainer({ userName }: ChatContainerProps) {
         }
         setMessages(prev => [...prev, errorMessage])
 
-        try {
-          await appendMessageToDb(userId, errorMessage)
-        } catch (err) {
-          logger.error('Failed to append error message to DB:', err)
-        }
+        // Persist error message to DB
+        appendCurrentMessageToDB(userId, errorMessage, 'error')
       } finally {
         setIsLoading(false)
       }
