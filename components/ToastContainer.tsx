@@ -1,8 +1,12 @@
 'use client'
 
 import React from 'react'
+import dynamic from 'next/dynamic'
 import { useToast } from '../context/ToastProvider'
-import Toast from './Toast'
+
+const Toast = dynamic(() => import('snackact-ui').then(mod => mod.Toast), {
+  ssr: false,
+})
 
 export const ToastContainer: React.FC = () => {
   const { toasts, removeToast } = useToast()

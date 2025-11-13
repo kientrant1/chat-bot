@@ -1,9 +1,7 @@
 'use client'
 
-import React from 'react'
+import { InfoIcon, WarningIcon } from 'snackact-ui/icons'
 import { ComponentProps } from '../types/component'
-import InfoIcon from './icons/InfoIcon'
-import WarningIcon from './icons/WarningIcon'
 
 interface ConfirmationProps extends ComponentProps {
   isOpen: boolean

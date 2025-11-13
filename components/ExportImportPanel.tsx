@@ -1,6 +1,5 @@
 import React, { useRef, useState } from 'react'
-import ExportIcon from '@/components/icons/ExportIcon'
-import ImportIcon from '@/components/icons/ImportIcon'
+import { ExportIcon, ImportIcon } from 'snackact-ui/icons'
 import { Message } from '@/types/message'
 import { useToast } from '@/context/ToastProvider'
 import logger from '@/utils/logger'

@@ -1,6 +1,4 @@
-import React from 'react'
-import SearchIcon from './icons/SearchIcon'
-import CloseIcon from './icons/CloseIcon'
+import { SearchIcon, CloseIcon } from 'snackact-ui/icons'
 import { ComponentProps } from '../types/component'
 
 interface SearchBarProps extends ComponentProps {

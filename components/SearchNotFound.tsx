@@ -1,7 +1,6 @@
 'use client'
 
-import React from 'react'
-import SearchNotFoundIcon from '@/components/icons/SearchNotFoundIcon'
+import { SearchNotFoundIcon } from 'snackact-ui/icons'
 
 interface SearchNotFoundProps {
   searchTerm: string

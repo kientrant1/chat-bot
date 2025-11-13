@@ -1,11 +1,11 @@
 'use client'
 
 import React, { useState, useEffect, useCallback } from 'react'
+import { DeleteIcon } from 'snackact-ui/icons'
 import ChatInput from '@/components/ChatInput'
 import SearchBar from '@/components/SearchBar'
 import Confirmation from '@/components/Confirmation'
 import UserProfile from '@/components/UserProfile'
-import DeleteIcon from '@/components/icons/DeleteIcon'
 import { callGeminiAPI } from '@/services/geminiService'
 import { getCurrentTimeString, formatTimestamp } from '@/utils/date'
 import logger from '@/utils/logger'

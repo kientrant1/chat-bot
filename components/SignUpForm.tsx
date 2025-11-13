@@ -3,10 +3,7 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import GoogleIcon from './icons/GoogleIcon'
-import GitHubIcon from './icons/GitHubIcon'
-import OwlWatcher from './OwlWatcher'
-import logger from '@/utils/logger'
+import { OwlWatcher } from 'snackact-ui'
 import { PAGE_URL } from '@/constants/url'
 
 interface SignUpFormProps {
@@ -17,13 +14,9 @@ interface SignUpFormProps {
     confirmPassword: string
     agreeToTerms: boolean
   }) => Promise<void>
-  onSocialLogin?: (provider: 'google' | 'github') => void
 }
 
-export default function SignUpForm({
-  onSubmit,
-  onSocialLogin,
-}: SignUpFormProps) {
+export default function SignUpForm({ onSubmit }: SignUpFormProps) {
   const router = useRouter()
   const [formData, setFormData] = useState({
     name: '',

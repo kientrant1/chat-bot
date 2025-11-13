@@ -1,11 +1,10 @@
 'use client'
 
-import React, { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Image from 'next/image'
 import { useSession, signOut } from 'next-auth/react'
+import { ChevronDownIcon, LogoutIcon } from 'snackact-ui/icons'
 import logger from '../utils/logger'
-import ChevronDownIcon from './icons/ChevronDownIcon'
-import LogoutIcon from './icons/LogoutIcon'
 import ExportImportPanel from './ExportImportPanel'
 import { PAGE_URL } from '@/constants/url'
 import { removeStorageItem, STORAGE_KEY } from '@/utils/storage'
