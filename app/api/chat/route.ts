@@ -47,26 +47,18 @@ export async function POST(request: NextRequest) {
     // Get the generative model
     const model = genAI.getGenerativeModel({ model: modelName })
 
-    // Convert messages to Gemini chat format
-    // Filter out the initial AI message and only include actual conversation
-    const conversationMessages = messages.filter((msg: Message) =>
-      msg.messageId.startsWith(INITIAL_PREFIX)
+    // Filter out the initial message to avoid confusing AI
+    // Only include actual conversation
+    const conversationMessages = messages.filter(
+      (msg: Message) => !msg.messageId.startsWith(INITIAL_PREFIX)
     )
 
+    // If no conversation yet, just use the last message
     if (conversationMessages.length === 0) {
-      // If no conversation yet, just use the last message
-      const lastMessage = messages[messages.length - 1]
-      const result = await model.generateContent(lastMessage.text)
-      const response = await result.response
-      const text = response.text()
-
-      // Increment request count after successful response
-      await increaseRequestCount(session?.user?.id || '')
-
-      return NextResponse.json({ response: text })
+      throw new Error('No conversation messages to process')
     }
 
-    // Start a chat session with history
+    // Start a chat session with previous conversation
     const chat = model.startChat({
       history: conversationMessages.slice(0, -1).map(msg => ({
         role: msg.isUser ? 'user' : 'model',
