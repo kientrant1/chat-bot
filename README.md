@@ -110,15 +110,6 @@ This project uses:
 yarn run build
 ```
 
-### Deploy on Vercel
-
-The easiest way to deploy is using the [Vercel Platform](https://vercel.com/new):
-
-1. Push your code to a Git repository
-2. Import your project in Vercel
-3. Add your `GEMINI_API_KEY` in the Environment Variables section
-4. Deploy!
-
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
