@@ -3050,7 +3050,7 @@ __metadata:
     react-markdown: "npm:^10.1.0"
     rehype-highlight: "npm:^7.0.2"
     remark-gfm: "npm:^4.0.1"
-    snackact-ui: "npm:^0.0.5"
+    snackact-ui: "npm:^0.0.6"
     tailwindcss: "npm:^4"
     typescript: "npm:^5"
     uuid: "npm:^13.0.0"
@@ -7456,9 +7456,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"snackact-ui@npm:^0.0.5":
-  version: 0.0.5
-  resolution: "snackact-ui@npm:0.0.5"
+"snackact-ui@npm:^0.0.6":
+  version: 0.0.6
+  resolution: "snackact-ui@npm:0.0.6"
   dependencies:
     "@radix-ui/react-checkbox": "npm:^1.3.3"
     "@radix-ui/react-progress": "npm:^1.1.8"
@@ -7478,7 +7478,7 @@ __metadata:
   peerDependencies:
     react: ^18.0.0 || ^19.0.0
     react-dom: ^18.0.0 || ^19.0.0
-  checksum: 10c0/5b89abdc9cccf2e5cab46e687869facbec81b30023e5bace39e85ec6ebadbfe1444d0d3efb4a9c7ff98eba1104010a7e5f0533267d398c74c88b25cea2ae04fd
+  checksum: 10c0/6700f581fc4864bfc539f308ae60e83cf2b0cf8f07171cc2bda3046b36247d179b18d4a2daf0bf83b4d2f95a106c146d735bd142b4b1272357fbec46c49505ac
   languageName: node
   linkType: hard
 

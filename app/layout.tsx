@@ -4,6 +4,8 @@ import AuthProvider from '@/context/AuthenProvider'
 import { ToastProvider } from '@/context/ToastProvider'
 import { ToastContainer } from '@/components/ToastContainer'
 
+import 'snackact-ui/css'
+
 export const metadata: Metadata = {
   title: 'AI Chat Bot',
   description: 'AI powered chat bot with beautiful UI',
