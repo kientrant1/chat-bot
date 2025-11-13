@@ -1,8 +1,9 @@
 'use client'
 
-import React, { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import { useSession } from 'next-auth/react'
+import { ChatHistory, ChatInput } from 'snackact-ui'
 import { DeleteIcon } from 'snackact-ui/icons'
-import ChatInput from '@/components/ChatInput'
 import SearchBar from '@/components/SearchBar'
 import Confirmation from '@/components/Confirmation'
 import UserProfile from '@/components/UserProfile'
@@ -18,8 +19,6 @@ import {
   clearHistoryInDb,
   saveImportedMessagesToDb,
 } from '@/services/chatHistoryService'
-import { useSession } from 'next-auth/react'
-import ChatHistory from '@/components/ChatHistory'
 import { getOrCreateGuestId } from '@/utils/user'
 
 interface ChatContainerProps extends ComponentProps {
