@@ -45,3 +45,6 @@ next-env.d.ts
 /lib/generated/prisma
 # Prisma local database
 prisma/dev.db
+
+#newrelic
+newrelic_agent.log
