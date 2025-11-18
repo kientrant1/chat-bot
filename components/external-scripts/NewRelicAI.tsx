@@ -1,3 +1,5 @@
+// Restrict this component to the server so we can call the Node agent APIs safely
+import 'server-only'
 import Script from 'next/script'
 import newrelic from 'newrelic'
 
