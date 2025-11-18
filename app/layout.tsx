@@ -12,6 +12,8 @@ export const metadata: Metadata = {
   description: 'AI powered chat bot with beautiful UI',
 }
 
+// Force dynamic rendering so New Relic browser instrumentation runs at request time
+export const dynamic = 'force-dynamic'
 export default function RootLayout({
   children,
 }: Readonly<{
