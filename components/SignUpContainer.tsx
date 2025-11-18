@@ -6,7 +6,6 @@ import SignUpForm from '@/components/SignUpForm'
 import { SignUpFormData } from '@/types/user'
 import logger from '@/utils/logger'
 import { API_URL, PAGE_URL } from '@/constants/url'
-import { signIn } from 'next-auth/react'
 
 export default function SignUpContainer() {
   const router = useRouter()
@@ -38,12 +37,5 @@ export default function SignUpContainer() {
     }
   }
 
-  const handleSocialLogin = (provider: 'google' | 'github') => {
-    logger.info('Social sign up initiated', { provider })
-    signIn(provider, { callbackUrl: '/' })
-  }
-
-  return (
-    <SignUpForm onSubmit={handleSignUp} onSocialLogin={handleSocialLogin} />
-  )
+  return <SignUpForm onSubmit={handleSignUp} />
 }

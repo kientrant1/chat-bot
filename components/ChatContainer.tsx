@@ -140,7 +140,8 @@ export default function ChatContainer({ userName }: ChatContainerProps) {
   )
 
   const handleSendMessage = useCallback(
-    async (text: string) => {
+    async (inputMessage: Omit<Message, 'messageId' | 'timestamp'>) => {
+      const text = inputMessage.text.trim()
       // Clear search when sending new message
       setSearchTerm('')
       setIsSearchVisible(false)

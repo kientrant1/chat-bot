@@ -1,3 +1,5 @@
+import { Message as SnackUIMessage } from 'snackact-ui'
+
 // Add other shared types here as they emerge
 export type MessageId = string
 export type Timestamp = string
@@ -12,7 +14,4 @@ export interface ChatMessage {
   createdAt: Date
 }
 
-export type Message = Pick<
-  ChatMessage,
-  'messageId' | 'text' | 'isUser' | 'timestamp'
->
+export type Message = SnackUIMessage
