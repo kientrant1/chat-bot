@@ -9,6 +9,7 @@ import ExportImportPanel from './ExportImportPanel'
 import { PAGE_URL } from '@/constants/url'
 import { removeStorageItem, STORAGE_KEY } from '@/utils/storage'
 import { Message } from '@/types/message'
+import SimulateError from './simulate/Error'
 
 interface UserProfileProps {
   userName?: string
@@ -166,6 +167,7 @@ export default function UserProfile({
                     setIsDropdownOpen(false)
                   }}
                 />
+                <SimulateError />
               </div>
             </div>
 
