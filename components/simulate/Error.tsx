@@ -1,6 +1,8 @@
+import logger from '@/utils/logger'
+
 export default function SimulateError() {
   const simulateError = () => {
-    console.error('Simulated error for testing purposes')
+    logger.error('Simulated error for testing purposes')
   }
 
   return (
