@@ -1,5 +1,5 @@
-import { OriginalMarkdownRenderer } from '@/components/MarkdownRenderer'
 import { getTermContent } from '@/services/termConditionService'
+import TermConditionContent from './TermConditionContent'
 
 export default async function TermAndConditionPage() {
   const data = await getTermContent(true)
@@ -7,7 +7,7 @@ export default async function TermAndConditionPage() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
-        <OriginalMarkdownRenderer className="font-normal" content={data} />
+        <TermConditionContent content={data} />
       </div>
     </div>
   )

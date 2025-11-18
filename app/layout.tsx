@@ -1,10 +1,11 @@
 import type { Metadata } from 'next'
-import '@/styles/globals.css'
 import AuthProvider from '@/context/AuthenProvider'
 import { ToastProvider } from '@/context/ToastProvider'
 import { ToastContainer } from '@/components/ToastContainer'
+import NewRelicAI from '@/components/external-scripts/NewRelicAI'
 
 import 'snackact-ui/css'
+import '@/styles/globals.css'
 
 export const metadata: Metadata = {
   title: 'AI Chat Bot',
@@ -18,6 +19,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <NewRelicAI />
+      </head>
       <body className="antialiased" suppressHydrationWarning={true}>
         <AuthProvider>
           <ToastProvider>
