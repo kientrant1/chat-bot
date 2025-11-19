@@ -1,6 +1,7 @@
 'use strict'
 
 // Load .env before New Relic inspects license/app values (Next.js loads them later)
+// Keep `dotenv` in production dependencies so this import works on Vercel/Node servers.
 try {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   require('dotenv').config()
