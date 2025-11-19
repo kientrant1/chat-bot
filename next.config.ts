@@ -14,6 +14,10 @@ const newRelicExternalPackages = Array.from(
 
 const nextConfig: NextConfig = {
   /* config options here */
+  // Ensure the New Relic config file is traced into every serverless function bundle
+  outputFileTracingIncludes: {
+    '/**/*': ['./newrelic.js'],
+  },
   images: {
     remotePatterns: [
       // Allow images from Google user content domain
