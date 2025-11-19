@@ -5,7 +5,6 @@ try {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   require('dotenv').config()
 } catch (error) {
-  // eslint-disable-next-line no-console
   console.warn(
     'New Relic: failed to load .env via dotenv. Make sure dependencies are installed.',
     error
@@ -14,7 +13,7 @@ try {
 
 if (!process.env.NEW_RELIC_LICENSE_KEY) {
   process.env.NEW_RELIC_ENABLED = 'false'
-  // eslint-disable-next-line no-console
+
   console.warn(
     'New Relic disabled: missing NEW_RELIC_LICENSE_KEY in environment.'
   )
