@@ -31,6 +31,19 @@ exports.config = {
   logging: {
     level: 'trace', // Emit all available log levels (info, error, warn) for maximum verbosity
   },
+  application_logging: {
+    enabled: true,
+    forwarding: {
+      enabled: true,
+      max_samples_stored: 10000,
+    },
+    metrics: {
+      enabled: true,
+    },
+    local_decorating: {
+      enabled: false,
+    },
+  },
 
   // AI Monitoring
   ai_monitoring: {
