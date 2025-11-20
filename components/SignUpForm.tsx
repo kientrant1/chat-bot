@@ -59,7 +59,7 @@ export default function SignUpForm({ onSubmit }: SignUpFormProps) {
         await onSubmit(formData)
       } else {
         // Default behavior if no onSubmit prop provided
-        router.push('/')
+        router.push(PAGE_URL.HOME)
       }
     } catch (err) {
       setError(
@@ -85,7 +85,7 @@ export default function SignUpForm({ onSubmit }: SignUpFormProps) {
         <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
           Already have an account?{' '}
           <Link
-            href="/login"
+            href={PAGE_URL.LOGIN}
             className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
           >
             Sign In

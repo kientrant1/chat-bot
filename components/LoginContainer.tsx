@@ -6,6 +6,7 @@ import LoginForm from '@/components/LoginForm'
 import ClientGuard from '@/components/authen/ClientGuard'
 import { signIn } from 'next-auth/react'
 import logger from '@/utils/logger'
+import { PAGE_URL } from '@/constants/url'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -33,7 +34,7 @@ export default function LoginPage() {
       if (result?.ok) {
         logger.info('Login successful via NextAuth', { email: formData.email })
         // Redirect to main chat page on success
-        router.push('/')
+        router.push(PAGE_URL.HOME)
         router.refresh() // Refresh to update session state
       }
     } catch (error) {
@@ -47,7 +48,7 @@ export default function LoginPage() {
   }
 
   const handleSocialLogin = (provider: 'google' | 'github') => {
-    signIn(provider, { callbackUrl: '/' })
+    signIn(provider, { callbackUrl: PAGE_URL.HOME })
   }
 
   return (

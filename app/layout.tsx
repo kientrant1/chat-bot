@@ -1,8 +1,11 @@
 import type { Metadata } from 'next'
 import AuthProvider from '@/context/AuthenProvider'
 import { ToastProvider } from '@/context/ToastProvider'
+import { SidebarProvider } from '@/context/SidebarProvider'
 import { ToastContainer } from '@/components/ToastContainer'
 import NewRelicAI from '@/components/external-scripts/NewRelicAI'
+import Menu from '@/components/Menu'
+import MainContent from '@/components/MainContent'
 
 import 'snackact-ui/css'
 import '@/styles/globals.css'
@@ -27,8 +30,13 @@ export default function RootLayout({
       <body className="antialiased" suppressHydrationWarning={true}>
         <AuthProvider>
           <ToastProvider>
-            {children}
-            <ToastContainer />
+            <SidebarProvider>
+              <div className="flex h-screen overflow-hidden">
+                <Menu />
+                <MainContent>{children}</MainContent>
+              </div>
+              <ToastContainer />
+            </SidebarProvider>
           </ToastProvider>
         </AuthProvider>
       </body>
