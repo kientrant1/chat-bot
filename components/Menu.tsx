@@ -66,6 +66,7 @@ export default function Menu() {
     const hasChildren = item.children && item.children.length > 0
     const isActive = isActiveMenuItem(item)
     const isDropdownOpen = openDropdown === item.id
+    const gapClass = item.icon ? '' : 'gap-2 pl-2'
 
     if (hasChildren) {
       return (
@@ -76,11 +77,13 @@ export default function Menu() {
               isActive
                 ? menuStyles.sidebar.menuItem.active
                 : menuStyles.sidebar.menuItem.inactive
-            } w-full justify-between group`}
+            } w-full justify-between group ${gapClass}`}
             title={collapsed ? item.label : ''}
           >
             <div className="flex items-center space-x-3 flex-1 min-w-0">
-              <span className="text-xl shrink-0">{item.icon}</span>
+              {item.icon && (
+                <span className="text-xl shrink-0">{item.icon}</span>
+              )}
               {!collapsed && (
                 <>
                   <span className="flex-1 text-left truncate">
@@ -112,9 +115,9 @@ export default function Menu() {
                     pathname === child.href
                       ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/20'
                       : ''
-                  }`}
+                  } ${child.icon ? '' : 'gap-2 pl-2'}`}
                 >
-                  <span className="text-lg">{child.icon}</span>
+                  {child.icon && <span className="text-lg">{child.icon}</span>}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="font-medium truncate">
@@ -147,10 +150,10 @@ export default function Menu() {
             isActive
               ? menuStyles.sidebar.menuItem.active
               : menuStyles.sidebar.menuItem.inactive
-          } w-full group`}
+          } w-full group ${gapClass}`}
           title={collapsed ? item.label : ''}
         >
-          <span className="text-xl shrink-0">{item.icon}</span>
+          {item.icon && <span className="text-xl shrink-0">{item.icon}</span>}
           {!collapsed && (
             <>
               <span className="flex-1 text-left truncate">{item.label}</span>
@@ -172,22 +175,29 @@ export default function Menu() {
           isActive
             ? menuStyles.sidebar.menuItem.active
             : menuStyles.sidebar.menuItem.inactive
-        } w-full group`}
+        } w-full group ${gapClass}`}
         title={collapsed ? item.label : ''}
         {...(item.isExternal && {
           target: '_blank',
           rel: 'noopener noreferrer',
         })}
       >
-        <span className="text-xl shrink-0">{item.icon}</span>
+        {item.icon && <span className="text-xl shrink-0">{item.icon}</span>}
         {!collapsed && (
-          <>
-            <span className="flex-1 text-left truncate">{item.label}</span>
-            {item.badge && (
-              <span className={menuStyles.badge}>{item.badge}</span>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <span className="font-medium truncate">{item.label}</span>
+              {item.badge && (
+                <span className={menuStyles.badge}>{item.badge}</span>
+              )}
+              {item.isExternal && <ExternalLink />}
+            </div>
+            {item.description && (
+              <p className="text-xs text-gray-500 mt-0.5 truncate">
+                {item.description}
+              </p>
             )}
-            {item.isExternal && <ExternalLink />}
-          </>
+          </div>
         )}
       </Link>
     )
@@ -225,7 +235,7 @@ export default function Menu() {
             href={PAGE_URL.HOME}
             className={`${menuStyles.sidebar.logo} ${isCollapsed ? 'justify-center' : ''}`}
           >
-            <span className="text-3xl">🤖</span>
+            <span className="text-2xl font-black text-blue-600">AI</span>
             {!isCollapsed && (
               <span className="font-bold text-lg">AI Chat Bot</span>
             )}

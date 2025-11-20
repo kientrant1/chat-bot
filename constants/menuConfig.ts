@@ -31,73 +31,38 @@ export const menuConfig: MenuItem[] = [
     id: 'chat',
     href: PAGE_URL.CHAT_BOT,
     label: 'Chat',
-    icon: '💬',
-    description: 'AI-powered conversations',
     category: MenuCategories.MAIN,
   },
   {
-    id: 'quiz',
+    id: 'quiz-center',
+    href: PAGE_URL.QUIZ_MASTER,
     label: 'Quiz Center',
-    icon: '📝',
     category: MenuCategories.LEARNING,
-    children: [
-      {
-        id: 'quiz-master',
-        href: PAGE_URL.QUIZ_MASTER,
-        label: 'Quiz Master',
-        icon: '📚',
-        description: 'General knowledge quizzes',
-      },
-      {
-        id: 'scrum-master',
-        href: PAGE_URL.SCRUM_MASTER,
-        label: 'Scrum Master Quiz',
-        icon: '🏆',
-        badge: 'New',
-        description: 'Scrum methodology assessment',
-      },
-    ],
+    description: 'Practice general knowledge or Scrum quizzes',
+  },
+  {
+    id: 'quiz-master',
+    href: PAGE_URL.QUIZ_MASTER,
+    label: 'Quiz Master',
+    category: MenuCategories.LEARNING,
+    description: 'Scrum master sspruiz',
+  },
+  {
+    id: 'scrum-master',
+    href: PAGE_URL.SCRUM_MASTER,
+    label: 'Scrunn Master',
+    badge: 'New',
+    category: MenuCategories.LEARNING,
+    description: 'Scrum methodology assessment',
   },
   {
     id: 'docs',
     href: PAGE_URL.TERM_CONDITION,
     label: 'Terms & Conditions',
-    icon: '📄',
     category: MenuCategories.LEGAL,
   },
   // Add more menu items here as needed
 ]
-
-// Example of how to add future menu items:
-/*
-  {
-    id: 'analytics',
-    href: '/analytics',
-    label: 'Analytics',
-    icon: '📊',
-    roles: ['admin', 'manager'],
-    category: MenuCategories.ADMIN,
-    badge: 'Beta',
-    description: 'View application analytics and insights'
-  },
-  {
-    id: 'settings',
-    href: '/settings',
-    label: 'Settings',
-    icon: '⚙️',
-    category: MenuCategories.TOOLS,
-    description: 'Application settings and preferences'
-  },
-  {
-    id: 'help',
-    href: 'https://docs.example.com',
-    label: 'Help & Documentation',
-    icon: '❓',
-    isExternal: true,
-    category: MenuCategories.TOOLS,
-    description: 'External help documentation'
-  }
-*/
 
 // Menu styling configuration
 export const menuStyles = {
@@ -124,21 +89,18 @@ export const menuStyles = {
   // New sidebar styles
   sidebar: {
     container:
-      'fixed left-0 top-0 h-full bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 flex flex-col transition-all duration-300 ease-in-out z-40 shadow-xl',
-    header:
-      'flex items-center gap-3 px-4 py-5 border-b border-gray-200 dark:border-gray-700',
-    logo: 'flex items-center gap-3 text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors',
+      'fixed left-0 top-0 h-full bg-white border-r border-gray-200 flex flex-col transition-all duration-300 ease-in-out z-40 shadow-sm',
+    header: 'flex items-center gap-3 px-5 py-6 border-b border-gray-200',
+    logo: 'flex items-center gap-3 text-gray-900 hover:text-blue-600 transition-colors font-semibold',
     nav: 'flex-1 overflow-y-auto overflow-x-hidden px-3 py-4',
     menuItem: {
-      base: 'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-[1.02]',
-      active:
-        'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 shadow-sm',
-      inactive:
-        'text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-100 dark:hover:bg-gray-800',
+      base: 'flex items-center px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150',
+      active: 'bg-blue-50 text-blue-700 shadow-inner',
+      inactive: 'text-gray-700 hover:text-blue-600 hover:bg-gray-100',
     },
     submenuItem:
-      'flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800',
-    footer: 'border-t border-gray-200 dark:border-gray-700 p-4 mt-auto',
+      'flex items-center px-3 py-2 rounded-lg text-sm transition-colors text-gray-600 hover:text-blue-600 hover:bg-gray-50',
+    footer: 'border-t border-gray-200 p-4 mt-auto',
     userSection: 'flex items-start flex-col',
   },
 }
