@@ -1,5 +1,5 @@
 import { getTermContent } from '@/services/termConditionService'
-import TermConditionContent from './TermConditionContent'
+import TermConditionContent from '@/components/TermConditionContent'
 
 export default async function TermAndConditionPage() {
   const data = await getTermContent(true)

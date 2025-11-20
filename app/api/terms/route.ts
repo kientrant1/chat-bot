@@ -3,6 +3,16 @@ import { getServerSession } from '@/utils/auth'
 import logger from '@/utils/logger'
 import { NextRequest, NextResponse } from 'next/server'
 
+/* TEST WITH:
+  curl -X POST "http://localhost:3000/api/terms" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "policyType": "TERMS_OF_SERVICE",
+    "version": "1.0.0",
+    "content": "<h1>Terms of Service</h1><p>These are the terms...</p>",
+    "effectiveDate": "2024-01-01T12:00:00.000Z"
+  }'
+*/
 export async function POST(request: NextRequest) {
   try {
     const session = getServerSession()
