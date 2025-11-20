@@ -1,13 +1,30 @@
 # AI Chat Bot
 
-A modern AI chatbot application built with Next.js 15 and powered by Google Gemini AI. Features a clean, responsive interface with dark mode support, real-time chat, message search, and persistent chat history.
+A modern AI chatbot application built with Next.js 15 and powered by Google Gemini AI. Features a clean, responsive interface with dark mode support, real-time chat, message search, persistent chat history, and an interactive quiz system for skill assessment.
 
 ## ✨ Features
+
+### Chat Features
 
 - 🤖 **AI-Powered Chat** - Integrated with Google Gemini 2.0 Flash model
 - 💬 **Real-time Chat Interface** - Smooth, responsive messaging experience
 - 🔍 **Message Search** - Search through chat history with highlighting
 - 💾 **Persistent Storage** - Chat history saved in localStorage. It's sent to AI to respond appropriately based on the full conversation context
+
+### Quiz Master Features
+
+- 📝 **Interactive Quizzes** - Comprehensive quiz system for skill assessment
+- 🏆 **Scrum Master Certification** - Dedicated Scrum Master knowledge tests
+- ⏱️ **Timer Functionality** - Built-in timer to track quiz completion time
+- 📊 **Real-time Scoring** - Instant feedback and performance analytics
+- 🎯 **Question Navigation** - Easy navigation between questions with status indicators
+- 🏷️ **Tag-based Filtering** - Filter questions by categories and topics
+- 📧 **Email Results** - Optional email delivery of quiz results
+- 🔀 **Randomized Questions** - Shuffled question order for varied experience
+- 📈 **Progress Tracking** - Visual progress indicators and completion status
+
+### General Features
+
 - 🎨 **Modern UI Design** - Built with Tailwind CSS v4
 - 📱 **Fully Responsive** - Works seamlessly on desktop and mobile
 - ⚡ **Fast Performance** - Built with Next.js 16 App Router

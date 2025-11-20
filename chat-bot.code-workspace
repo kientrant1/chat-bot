@@ -16,5 +16,8 @@
       "source.organizeImports": "never"
     },
     "path-intellisense.showHiddenFiles": true,
+    "cSpell.words": [
+      "SUPABASE"
+    ],
   }
 }

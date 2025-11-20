@@ -6,7 +6,7 @@ import dynamic from 'next/dynamic'
 import { DeleteIcon } from 'snackact-ui/icons'
 import SearchBar from '@/components/SearchBar'
 import Confirmation from '@/components/Confirmation'
-import UserProfile from '@/components/UserProfile'
+import ExportImportPanel from '@/components/ExportImportPanel'
 import { callGeminiAPI } from '@/services/geminiService'
 import { getCurrentTimeString, formatTimestamp } from '@/utils/date'
 import logger from '@/utils/logger'
@@ -209,12 +209,12 @@ export default function ChatContainer({ userName }: ChatContainerProps) {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50 dark:bg-black">
+    <div className="flex flex-col h-full bg-gray-50 dark:bg-black">
       {/* Header */}
       <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 p-4 shadow-sm">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-between gap-4">
-            <div className="flex-1 min-w-0">
+            <div className="flex-1 min-w-0 lg:ml-0 ml-12">
               <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100 truncate">
                 AI Chat Bot
               </h1>
@@ -230,6 +230,11 @@ export default function ChatContainer({ userName }: ChatContainerProps) {
               >
                 <DeleteIcon />
               </button>
+              <ExportImportPanel
+                messages={messages}
+                userName={userName}
+                onImportHistory={handleImportHistory}
+              />
               <SearchBar
                 isVisible={isSearchVisible}
                 searchTerm={searchTerm}
@@ -238,12 +243,6 @@ export default function ChatContainer({ userName }: ChatContainerProps) {
                 onSearchChange={handleSearchChange}
                 onClearSearch={handleClearSearch}
               />
-              <div className="pl-3 border-l border-gray-200 dark:border-gray-600">
-                <UserProfile
-                  messages={messages}
-                  onImportHistory={handleImportHistory}
-                />
-              </div>
             </div>
           </div>
         </div>

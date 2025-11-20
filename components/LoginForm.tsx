@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { GoogleIcon } from 'snackact-ui/icons'
 import logger from '@/utils/logger'
+import { PAGE_URL } from '@/constants/url'
 
 const OwlWatcher = dynamic(
   () => import('snackact-ui').then(mod => mod.OwlWatcher),
@@ -80,7 +81,7 @@ export default function LoginForm({ onSubmit, onSocialLogin }: LoginFormProps) {
         <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
           Not a member?{' '}
           <Link
-            href="/signup"
+            href={PAGE_URL.SIGN_UP}
             className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
           >
             Sign Up Now
