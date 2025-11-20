@@ -3,9 +3,8 @@ import { Resend } from 'resend'
 import logger from '@/utils/logger'
 import { Email } from '@/types/email'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
-
 export async function POST(req: Request) {
+  const resend = new Resend(process.env.RESEND_API_KEY)
   try {
     const body: Email = await req.json()
 
