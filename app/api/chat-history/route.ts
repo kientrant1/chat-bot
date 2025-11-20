@@ -2,8 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getPrisma } from '@/lib/prisma'
 import logger from '@/utils/logger'
 import { ChatMessage, Message } from '@/types/message'
+import { withAuth } from '@/utils/auth'
 
-export async function GET(request: NextRequest) {
+export const GET = withAuth(async (request: NextRequest) => {
   try {
     const url = new URL(request.url)
     const userId = url.searchParams.get('userId')
@@ -32,9 +33,9 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     )
   }
-}
+})
 
-export async function POST(request: NextRequest) {
+export const POST = withAuth(async (request: NextRequest) => {
   try {
     const body = await request.json()
     const { userId, messages, replace } = body as {
@@ -83,9 +84,9 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     )
   }
-}
+})
 
-export async function DELETE(request: NextRequest) {
+export const DELETE = withAuth(async (request: NextRequest) => {
   try {
     const url = new URL(request.url)
     const userId = url.searchParams.get('userId')
@@ -104,4 +105,4 @@ export async function DELETE(request: NextRequest) {
       { status: 500 }
     )
   }
-}
+})

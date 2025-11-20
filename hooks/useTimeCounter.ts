@@ -18,7 +18,9 @@ const useTimeCounter = () => {
 
     // This cleanup function runs when isRunning changes or component unmounts
     return () => {
-      clearInterval(timer.current)
+      if (timer.current) {
+        clearInterval(timer.current)
+      }
     }
   }, [isRunning, incrementTimer])
 

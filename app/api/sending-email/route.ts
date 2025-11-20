@@ -1,9 +1,10 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { Resend } from 'resend'
 import logger from '@/utils/logger'
 import { Email } from '@/types/email'
+import { withAuth } from '@/utils/auth'
 
-export async function POST(req: Request) {
+export const POST = withAuth(async (req: NextRequest) => {
   const resend = new Resend(process.env.RESEND_API_KEY)
   try {
     const body: Email = await req.json()
@@ -20,4 +21,4 @@ export async function POST(req: Request) {
     logger.error('Sending email error: ', error)
     return NextResponse.json({ error }, { status: 500 })
   }
-}
+})

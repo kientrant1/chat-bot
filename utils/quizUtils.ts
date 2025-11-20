@@ -4,6 +4,7 @@ import type { QuizResult, UserAnswer } from '@/types/quiz'
  * Calculate the score for a quiz attempt
  */
 export function calculateScore(answers: UserAnswer[]): number {
+  if (answers.length === 0) return 0
   const correctAnswers = answers.filter(answer => answer.isCorrect).length
   return Math.round((correctAnswers / answers.length) * 100)
 }
