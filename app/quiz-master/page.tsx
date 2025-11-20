@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import QuizCard from '@/components/quiz-master/QuizCard'
-import { quizzes } from '@/__mock___/quizzes'
+import { quizzes } from '@/__mock__/quizzes'
 
 export default function QuizzesPage() {
   const router = useRouter()
