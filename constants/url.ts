@@ -10,4 +10,5 @@ export const API_URL = {
   CHAT_HISTORY: '/api/chat-history',
   TERMS: '/api/terms',
   SIGN_UP: '/api/signup',
+  SEND_EMAIL: '/api/sending-email',
 }
