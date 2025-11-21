@@ -53,7 +53,11 @@ export default function LoginPage() {
 
   return (
     <ClientGuard requireAuth={false}>
-      <LoginForm onSubmit={handleLogin} onSocialLogin={handleSocialLogin} />
+      <LoginForm
+        onSubmit={handleLogin}
+        signUpLink={PAGE_URL.SIGN_UP}
+        onSocialLogin={handleSocialLogin}
+      />
     </ClientGuard>
   )
 }
