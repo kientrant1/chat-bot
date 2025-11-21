@@ -18,10 +18,15 @@ interface LoginFormProps {
     password: string
     rememberMe: boolean
   }) => Promise<void>
+  signUpLink: string
   onSocialLogin?: (provider: 'google' | 'github') => void
 }
 
-export default function LoginForm({ onSubmit, onSocialLogin }: LoginFormProps) {
+export default function LoginForm({
+  onSubmit,
+  signUpLink,
+  onSocialLogin,
+}: LoginFormProps) {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -81,7 +86,7 @@ export default function LoginForm({ onSubmit, onSocialLogin }: LoginFormProps) {
         <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
           Not a member?{' '}
           <Link
-            href={PAGE_URL.SIGN_UP}
+            href={signUpLink}
             className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
           >
             Sign Up Now
