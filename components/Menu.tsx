@@ -70,7 +70,11 @@ export default function Menu() {
 
     if (hasChildren) {
       return (
-        <div key={item.id} className="w-full">
+        <div
+          key={item.id}
+          className="w-full"
+          data-testid="menu-item-with-children"
+        >
           <button
             onClick={() => setOpenDropdown(isDropdownOpen ? null : item.id)}
             className={`${menuStyles.sidebar.menuItem.base} ${
@@ -105,7 +109,7 @@ export default function Menu() {
           </button>
 
           {isDropdownOpen && !collapsed && (
-            <div className="ml-8 mt-1 space-y-1">
+            <div className="ml-1 mt-1 space-y-1" data-testid="submenu">
               {item.children!.map(child => (
                 <Link
                   key={child.id}
@@ -151,6 +155,7 @@ export default function Menu() {
               ? menuStyles.sidebar.menuItem.active
               : menuStyles.sidebar.menuItem.inactive
           } w-full group ${gapClass}`}
+          data-testid="menu-item-without-children"
           title={collapsed ? item.label : ''}
         >
           {item.icon && <span className="text-xl shrink-0">{item.icon}</span>}
