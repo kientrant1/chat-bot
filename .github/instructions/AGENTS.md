@@ -1,4 +1,6 @@
-# GitHub Copilot Instructions for React and Next.js Projects
+<!-- Reference link https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-repository-instructions#creating-path-specific-custom-instructions-1 -->
+
+# GitHub Copilot .instructionss for React/Next.js Projects
 
 This directory contains modular guidelines for GitHub Copilot to ensure consistent, clean, and performant code generation for React and Next.js applications.
 
@@ -10,19 +12,19 @@ This directory contains modular guidelines for GitHub Copilot to ensure consiste
 - Prettier: Auto-formatting via lint-staged (see .prettierrc for custom rules)
 - Husky, lint-staged: Check code before committing or pushing
 - TypeScript: Strict mode enabled in tsconfig.json
-- Tests: Jest + Testing Library for unit tests
+- Tests: Run unit tests
 
 ## Guidelines Overview
 
 This project follows a modular approach to coding guidelines. Each aspect is documented in its own file:
 
-- **[General Principles](./general-principles.md)** - Core coding principles, patterns, and best practices
-- **[React Guidelines](./react-guidelines.md)** - React-specific component design, state management, and performance
-- **[Next.js Guidelines](./nextjs-guidelines.md)** - Next.js routing, data fetching, and optimization
-- **[TypeScript Guidelines](./typescript-guidelines.md)** - TypeScript configuration and type organization
-- **[Testing Guidelines](./testing-guidelines.md)** - Testing strategies and best practices
-- **[Security Guidelines](./security-guidelines.md)** - Security practices and sensitive data handling
-- **[Project Structure](./project-structure.md)** - File organization and architecture patterns
+- **[General Principles](./general-principles..instructions.md)** - Core coding principles, patterns, and best practices
+- **[React Guidelines](./react..instructions.md)** - React-specific component design, state management, and performance
+- **[Next.js Guidelines](./nextjs..instructions.md)** - Next.js routing, data fetching, and optimization
+- **[TypeScript Guidelines](./typescript..instructions.md)** - TypeScript configuration and type organization
+- **[Testing Guidelines](./testing..instructions.md)** - Testing strategies and best practices
+- **[Security Guidelines](./security..instructions.md)** - Security practices and sensitive data handling
+- **[Project Structure](./project-structure..instructions.md)** - File organization and architecture patterns
 
 ## Quick Reference
 
