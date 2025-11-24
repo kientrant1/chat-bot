@@ -103,9 +103,9 @@ export async function POST(request: NextRequest) {
   } catch (error: unknown) {
     logger.error('Signup error:', error)
 
-    // Handle Firebase Auth errors
-    let errorMessage = 'An error occurred during signup'
+    let errorMessage = error
 
+    // Handle Firebase Auth errors
     if (error && typeof error === 'object' && 'code' in error) {
       const firebaseError = error as { code: string; message?: string }
       switch (firebaseError.code) {
@@ -123,6 +123,6 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    return NextResponse.json({ error: errorMessage }, { status: 400 })
+    return NextResponse.json({ error: errorMessage }, { status: 500 })
   }
 }
