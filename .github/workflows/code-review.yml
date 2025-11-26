@@ -1,0 +1,80 @@
+name: AI Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade openai
+
+      - name: AI Code Review
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          python << 'EOF'
+          import os
+          import subprocess
+          from textwrap import dedent
+          from openai import OpenAI
+
+          client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+
+          base_ref = os.environ.get("GITHUB_BASE_REF")
+          if base_ref:
+              remote_base = f"origin/{base_ref}"
+              subprocess.run(["git", "fetch", "origin", base_ref], check=False)
+          else:
+              remote_base = "HEAD^"
+
+          try:
+              diff = subprocess.check_output(
+                  ["git", "diff", f"{remote_base}...HEAD"]
+              ).decode("utf-8", errors="ignore")
+          except subprocess.CalledProcessError:
+              diff = subprocess.check_output(
+                  ["git", "diff", "HEAD^...HEAD"]
+              ).decode("utf-8", errors="ignore")
+
+          if not diff.strip():
+              print("Không có diff để review.")
+              raise SystemExit(0)
+
+          system_prompt = dedent("""
+          Bạn là một senior developer. Hãy review code diff dưới đây và:
+          - Tóm tắt thay đổi chính.
+          - Chỉ ra bug tiềm ẩn, smell, security risk.
+          - Đề xuất cải tiến (performance, readability, structure).
+          - Trả lời ngắn gọn, dùng bullet point nếu hợp lý.
+          """)
+
+          user_prompt = f"Đây là diff của PR:\n\n```diff\n{diff}\n```"
+
+          response = client.chat.completions.create(
+              model="gpt-4.1",
+              messages=[
+                  {"role": "system", "content": system_prompt},
+                  {"role": "user", "content": user_prompt},
+              ],
+              temperature=0.2,
+          )
+
+          print("===== AI REVIEW START =====")
+          print(response.choices[0].message.content)
+          print("===== AI REVIEW END =====")
+          EOF
