@@ -2,8 +2,13 @@
 
 import { useMemo, useState } from 'react'
 import { Widget } from '@/types/gemini'
-import { fetchWidgetsFromGemini, localGenerateWidgets } from '@/services/gemini'
+import {
+  fetchWidgetsFromGemini,
+  localGenerateWidgets,
+  updateWidgetsWithGemini,
+} from '@/services/gemini'
 import GeneratedWidget, { Mode } from '@/components/simulate/GeneratedWidget'
+import logger from '@/utils/logger'
 
 export default function Page() {
   const [mode, setMode] = useState<Mode>('beginner')
@@ -20,6 +25,9 @@ export default function Page() {
   const [activity, setActivity] = useState<string[]>([
     'AG-UI initialized with default generated dashboard.',
   ])
+
+  const [updatePrompt, setUpdatePrompt] = useState<string>('')
+
   const [useGemini, setUseGemini] = useState<boolean>(true)
   const [loading, setLoading] = useState<boolean>(false)
 
@@ -86,6 +94,28 @@ export default function Page() {
         ...prev.slice(0, 4),
       ])
       setWidgets(localGenerateWidgets(prompt))
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function handleAIUpdate() {
+    if (!updatePrompt.trim()) return
+    setLoading(true)
+    try {
+      const updated = await updateWidgetsWithGemini(widgets, updatePrompt)
+      setWidgets(updated)
+      setActivity(prev => [
+        `Gemini UPDATED UI with prompt: "${updatePrompt}"`,
+        ...prev.slice(0, 5),
+      ])
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      logger.error(err)
+      setActivity(prev => [
+        `AI update failed: ${err?.message ?? 'Unknown'}`,
+        ...prev.slice(0, 5),
+      ])
     } finally {
       setLoading(false)
     }
@@ -302,6 +332,36 @@ export default function Page() {
                     : 'Uses local layout engine (no external AI).'}
                 </span>
               </div>
+            </div>
+
+            {/* AI Update Existing UI */}
+            <div className="space-y-1 border-t border-slate-600/60 pt-3 mt-3">
+              <label className="text-xs font-medium opacity-80">
+                Update existing UI with AI (UI-state aware)
+              </label>
+              <input
+                type="text"
+                value={updatePrompt}
+                onChange={e => setUpdatePrompt(e.target.value)}
+                className={
+                  'w-full text-xs rounded-xl border px-3 py-2 bg-transparent outline-none ' +
+                  (theme === 'dark'
+                    ? 'border-slate-600 focus:border-indigo-400'
+                    : 'border-slate-300 focus:border-indigo-500')
+                }
+                placeholder='Example: "Add a Priority column to the table", "Make the chart bigger"...'
+              />
+              <button
+                onClick={handleAIUpdate}
+                disabled={loading || !updatePrompt.trim()}
+                className="inline-flex items-center gap-1 text-xs font-medium px-3 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-400 disabled:opacity-60 disabled:cursor-not-allowed text-slate-900 shadow-sm"
+              >
+                {loading ? 'Updating...' : 'Update UI with AI'}
+              </button>
+              <p className="text-[10px] opacity-60">
+                This sends the <strong>current UI state</strong> + your
+                instruction to Gemini, then renders the updated UI.
+              </p>
             </div>
 
             {/* Simulated MCP tools */}

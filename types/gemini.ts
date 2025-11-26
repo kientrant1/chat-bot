@@ -9,6 +9,7 @@ interface Row {
   id: string
   status: string
   owner: string
+  priority?: string
 }
 
 export interface Widget {

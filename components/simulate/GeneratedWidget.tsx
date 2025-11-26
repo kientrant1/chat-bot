@@ -52,19 +52,21 @@ export default function GeneratedWidget({
         </header>
         <p className="text-xs opacity-80 mb-1">{widget.description}</p>
         <div className="border border-slate-600/60 rounded-xl overflow-hidden text-[11px]">
-          <div className="grid grid-cols-3 bg-slate-800/60 px-2 py-1 font-semibold">
+          <div className="grid grid-cols-4 bg-slate-800/60 px-2 py-1 font-semibold">
             <span>ID</span>
             <span>Status</span>
             <span>Owner</span>
+            <span>Priority</span>
           </div>
           {(widget.rows ?? []).map(row => (
             <div
               key={row.id}
-              className="grid grid-cols-3 px-2 py-1 border-t border-slate-700/60"
+              className="grid grid-cols-4 px-2 py-1 border-t border-slate-700/60"
             >
               <span>{row.id}</span>
               <span>{row.status}</span>
               <span>{row.owner}</span>
+              <span>{row.priority || '-'}</span>
             </div>
           ))}
         </div>

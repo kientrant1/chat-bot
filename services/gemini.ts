@@ -70,7 +70,7 @@ export const localGenerateWidgets = (prompt: string): Widget[] => {
 export const fetchWidgetsFromGemini = async (
   prompt: string
 ): Promise<Widget[]> => {
-  const res = await fetch('/api/gemini-layout', {
+  const res = await fetch('/api/gemini/create-layout', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ prompt }),
@@ -89,4 +89,27 @@ export const fetchWidgetsFromGemini = async (
 
   const data = (await res.json()) as { widgets?: Widget[] }
   return data.widgets ?? []
+}
+
+export const updateWidgetsWithGemini = async (
+  currentWidgets: Widget[],
+  userPrompt: string
+): Promise<Widget[]> => {
+  const res = await fetch('/api/gemini/change-layout', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      currentUI: { widgets: currentWidgets },
+      userPrompt,
+    }),
+  })
+
+  const data = await res.json()
+
+  if (!res.ok) {
+    const errMsg = (data && data.error) || 'Gemini update failed'
+    throw new Error(errMsg)
+  }
+
+  return (data.widgets as Widget[]) ?? []
 }
