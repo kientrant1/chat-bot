@@ -42,7 +42,7 @@ export default function LoginPage() {
       const errorMessage =
         error instanceof Error
           ? error.message
-          : 'An error occurred during login'
+          : 'An error occurred during loginddd'
       throw new Error(errorMessage)
     }
   }
