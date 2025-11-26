@@ -4,6 +4,11 @@ on:
   pull_request:
     types: [opened, synchronize]
 
+permissions:           # 👈 QUAN TRỌNG
+  contents: read
+  issues: write        # để tạo comment trên PR (PR là 1 loại "issue")
+  pull-requests: write
+
 jobs:
   review:
     runs-on: ubuntu-latest
@@ -28,10 +33,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           python << 'EOF'
-          import os
-          import subprocess
-          import json
-          import requests
+          import os, subprocess, json, requests
           from textwrap import dedent
           from openai import OpenAI
 
@@ -49,7 +51,6 @@ jobs:
                   remote = f"origin/{base_ref}"
               else:
                   remote = "HEAD^"
-
               try:
                   return subprocess.check_output(
                       ["git", "diff", f"{remote}...HEAD"]
@@ -60,12 +61,10 @@ jobs:
                   ).decode("utf-8", errors="ignore")
 
           diff = get_diff()
-
           if not diff.strip():
               print("⚠️ No diff → skip review.")
               raise SystemExit(0)
 
-          # PROMPT
           system_prompt = dedent("""
           Bạn là một senior developer. Hãy review code diff dưới đây và:
           - Tóm tắt thay đổi chính.
@@ -76,7 +75,6 @@ jobs:
 
           user_prompt = f"Đây là diff của PR:\n\n```diff\n{diff}\n```"
 
-          # CALL OPENAI
           try:
               completion = client.chat.completions.create(
                   model="gpt-4.1-mini",
@@ -88,15 +86,15 @@ jobs:
               )
               review_text = completion.choices[0].message.content
           except Exception as e:
-              if "insufficient_quota" in str(e):
-                  print("⚠️ Hết quota / hết free. Bỏ qua AI review.")
+              msg = str(e)
+              if "insufficient_quota" in msg:
+                  print("⚠️ Hết quota OpenAI → bỏ qua review, không fail CI.")
                   raise SystemExit(0)
               raise
 
           print("===== AI REVIEW TEXT =====")
           print(review_text)
 
-          # GITHUB API COMMENT
           repo = os.environ["GITHUB_REPOSITORY"]
           event_path = os.environ["GITHUB_EVENT_PATH"]
           token = os.environ["GITHUB_TOKEN"]
@@ -104,7 +102,16 @@ jobs:
           with open(event_path, "r") as f:
               event = json.load(f)
 
+          pr = event.get("pull_request") or {}
+          head_repo = pr.get("head", {}).get("repo", {}).get("full_name")
+          base_repo = pr.get("base", {}).get("repo", {}).get("full_name")
           pr_number = event["number"]
+
+          # Nếu PR từ fork → thường không comment được với pull_request event
+          if head_repo and base_repo and head_repo != base_repo:
+              print(f"⚠️ PR từ fork ({head_repo} -> {base_repo}), bỏ qua comment để tránh 403.")
+              raise SystemExit(0)
+
           url = f"https://api.github.com/repos/{repo}/issues/{pr_number}/comments"
 
           headers = {
@@ -117,8 +124,10 @@ jobs:
           }
 
           r = requests.post(url, headers=headers, json=body)
+          print("Status:", r.status_code)
+          print("Response:", r.text)
           if r.status_code >= 300:
-              print("❌ Failed to post PR comment:", r.text)
+              print("❌ Failed to post PR comment (có thể thiếu permission).")
           else:
               print("✅ Comment posted to PR successfully!")
           EOF
