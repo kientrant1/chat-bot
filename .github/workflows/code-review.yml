@@ -12,7 +12,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # để có đủ history cho git diff
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -23,7 +23,7 @@ jobs:
         run: |
           pip install --upgrade openai
 
-      - name: AI Code Review
+      - name: AI Code Review (gpt-4.1-mini, không fail nếu hết quota)
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
@@ -31,25 +31,41 @@ jobs:
           import os
           import subprocess
           from textwrap import dedent
+
           from openai import OpenAI
 
-          client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+          api_key = os.environ.get("OPENAI_API_KEY")
+          if not api_key:
+              print("⚠️ Không có OPENAI_API_KEY, bỏ qua AI review.")
+              raise SystemExit(0)
 
-          base_ref = os.environ.get("GITHUB_BASE_REF")
-          if base_ref:
-              remote_base = f"origin/{base_ref}"
-              subprocess.run(["git", "fetch", "origin", base_ref], check=False)
-          else:
-              remote_base = "HEAD^"
+          client = OpenAI(api_key=api_key)
 
-          try:
-              diff = subprocess.check_output(
-                  ["git", "diff", f"{remote_base}...HEAD"]
-              ).decode("utf-8", errors="ignore")
-          except subprocess.CalledProcessError:
-              diff = subprocess.check_output(
-                  ["git", "diff", "HEAD^...HEAD"]
-              ).decode("utf-8", errors="ignore")
+          def get_diff():
+              # Base branch của PR, ví dụ: main, master, develop...
+              base_ref = os.environ.get("GITHUB_BASE_REF")  # chỉ có trên pull_request event
+
+              if base_ref:
+                  remote_base = f"origin/{base_ref}"
+                  # fetch base để chắc chắn tồn tại
+                  subprocess.run(["git", "fetch", "origin", base_ref], check=False)
+              else:
+                  # fallback nếu không phải event PR
+                  remote_base = "HEAD^"
+
+              try:
+                  diff = subprocess.check_output(
+                      ["git", "diff", f"{remote_base}...HEAD"]
+                  ).decode("utf-8", errors="ignore")
+              except subprocess.CalledProcessError:
+                  # fallback đơn giản
+                  diff = subprocess.check_output(
+                      ["git", "diff", "HEAD^...HEAD"]
+                  ).decode("utf-8", errors="ignore")
+
+              return diff
+
+          diff = get_diff()
 
           if not diff.strip():
               print("Không có diff để review.")
@@ -65,16 +81,29 @@ jobs:
 
           user_prompt = f"Đây là diff của PR:\n\n```diff\n{diff}\n```"
 
-          response = client.chat.completions.create(
-              model="gpt-4.1",
-              messages=[
-                  {"role": "system", "content": system_prompt},
-                  {"role": "user", "content": user_prompt},
-              ],
-              temperature=0.2,
-          )
+          try:
+              response = client.chat.completions.create(
+                  model="gpt-4.1-mini",  # model rẻ
+                  messages=[
+                      {"role": "system", "content": system_prompt},
+                      {"role": "user", "content": user_prompt},
+                  ],
+                  temperature=0.2,
+              )
+          except Exception as e:
+              msg = str(e)
+              # Nếu hết quota / free credit, không cho CI fail
+              if "insufficient_quota" in msg or "RateLimitError" in msg:
+                  print("⚠️ OpenAI báo hết quota / không còn free credit.")
+                  print("   → Bỏ qua AI review, nhưng workflow vẫn PASS.")
+                  raise SystemExit(0)
+              else:
+                  # Các lỗi khác thì cho fail bình thường để bạn còn biết
+                  raise
+
+          review_text = response.choices[0].message.content
 
           print("===== AI REVIEW START =====")
-          print(response.choices[0].message.content)
+          print(review_text)
           print("===== AI REVIEW END =====")
           EOF
