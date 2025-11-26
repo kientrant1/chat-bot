@@ -1,6 +1,7 @@
+import { NextRequest, NextResponse } from 'next/server'
 import { siteConfig } from '@/constants/siteConfig'
 import { LayoutResponse } from '@/types/gemini'
-import { NextRequest, NextResponse } from 'next/server'
+import logger from '@/utils/logger'
 
 const systemInstruction = `
 Bạn là một engine layout cho AG-UI.
@@ -63,6 +64,7 @@ export async function POST(req: NextRequest) {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const data = (await resp.json()) as any
+    logger.info('Gemini response data:', data)
 
     if (!resp.ok) {
       console.error('Gemini error:', data)
