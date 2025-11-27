@@ -7,7 +7,7 @@ const { generate } = require('./llm')
 // Which files AI can touch:
 const GLOBS = ['**/*.ts', '**/*.tsx', '**/*.js']
 
-const findFiles = patterns => {
+function findFiles(patterns) {
   return new Promise((resolve, reject) => {
     const pattern =
       patterns.length === 1 ? patterns[0] : `{${patterns.join(',')}}`
@@ -19,7 +19,7 @@ const findFiles = patterns => {
   })
 }
 
-const processFile = async (relativePath, userPrompt) => {
+async function processFile(relativePath, userPrompt) {
   const fullPath = path.join(process.cwd(), relativePath)
   if (!fs.existsSync(fullPath)) return
 
@@ -60,7 +60,7 @@ ${original}
   fs.writeFileSync(fullPath, updated, 'utf8')
 }
 
-export const runCodegen = async ({ prompt }) => {
+async function runCodegen({ prompt }) {
   console.log('📝 User prompt:', prompt)
 
   const files = await findFiles(GLOBS)
@@ -72,3 +72,5 @@ export const runCodegen = async ({ prompt }) => {
 
   console.log('✅ Repo-wide update completed')
 }
+
+module.exports = { runCodegen }

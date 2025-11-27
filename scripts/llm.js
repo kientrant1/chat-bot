@@ -29,7 +29,7 @@ const provider = 'gemini'
   return content
 } */
 
-const generateWithGemini = async ({ system, user }) => {
+async function generateWithGemini({ system, user }) {
   const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) throw new Error('GEMINI_API_KEY is not set')
   const genAI = new GeminiAI(apiKey)
@@ -39,7 +39,7 @@ const generateWithGemini = async ({ system, user }) => {
   return res.response.text()
 }
 
-export async function generate({ system, user }) {
+async function generate({ system, user }) {
   if (provider === LLMProvider.OpenAI) {
     // return generateWithOpenAI({ system, user })
     throw new Error(
@@ -53,3 +53,5 @@ export async function generate({ system, user }) {
 
   throw new Error(`Unknown LLM_PROVIDER: ${provider}`)
 }
+
+module.exports = { generate }
