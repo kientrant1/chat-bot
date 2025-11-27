@@ -1,21 +1,18 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 const fs = require('fs')
 const path = require('path')
-const glob = require('glob')
+const { glob } = require('glob')
 const { generate } = require('./llm')
 
 // Which files AI can touch:
 const GLOBS = ['**/*.ts', '**/*.tsx', '**/*.js']
 
 function findFiles(patterns) {
-  return new Promise((resolve, reject) => {
+  return new Promise(async () => {
     const pattern =
       patterns.length === 1 ? patterns[0] : `{${patterns.join(',')}}`
 
-    glob(pattern, { nodir: true }, (err, matches) => {
-      if (err) reject(err)
-      else resolve(matches)
-    })
+    return await glob(pattern, { nodir: true })
   })
 }
 
