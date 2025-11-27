@@ -1,0 +1,50 @@
+name: AI Codegen PR
+
+on:
+  workflow_dispatch:
+    inputs:
+      prompt:
+        description: "Tell the AI what to do (e.g. refactor, add feature, etc.)"
+        required: true
+        type: string
+
+jobs:
+  ai-codegen:
+    runs-on: ubuntu-latest
+
+    env:
+      LLM_PROVIDER: openai
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: |
+          npm install openai@4 glob@10 ts-node typescript @types/node @types/glob
+
+      - name: Run generator with prompt
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          USER_PROMPT: ${{ github.event.inputs.prompt }}
+        run: npx ts-node scripts/ai-generator.ts
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add .
+          git commit -m "AI: ${{ github.event.inputs.prompt }}" || echo "No changes to commit"
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ai/prompt-run
+          title: "AI: ${{ github.event.inputs.prompt }}"
+          body: "Triggered by workflow_dispatch with prompt: `${{ github.event.inputs.prompt }}`"
