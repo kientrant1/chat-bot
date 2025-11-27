@@ -1,22 +1,17 @@
-import fs from 'fs'
-import path from 'path'
-// @ts-expect-error: install glob during CI/ Github Actions
-import glob from 'glob'
-import { generate } from './llm'
-
-export type RunCodegenOptions = {
-  prompt: string
-}
+/* eslint-disable @typescript-eslint/no-require-imports */
+const fs = require('fs')
+const path = require('path')
+const glob = require('glob')
+const { generate } = require('./llm')
 
 // Which files AI can touch:
 const GLOBS = ['**/*.ts', '**/*.tsx', '**/*.js']
 
-function findFiles(patterns: string[]): Promise<string[]> {
+const findFiles = patterns => {
   return new Promise((resolve, reject) => {
     const pattern =
       patterns.length === 1 ? patterns[0] : `{${patterns.join(',')}}`
 
-    // @ts-expect-error: ignore glob types
     glob(pattern, { nodir: true }, (err, matches) => {
       if (err) reject(err)
       else resolve(matches)
@@ -24,23 +19,7 @@ function findFiles(patterns: string[]): Promise<string[]> {
   })
 }
 
-export async function runCodegen({ prompt }: RunCodegenOptions): Promise<void> {
-  console.log('📝 User prompt:', prompt)
-
-  const files = await findFiles(GLOBS)
-  console.log(`📂 Found ${files.length} files`)
-
-  for (const relativePath of files) {
-    await processFile(relativePath, prompt)
-  }
-
-  console.log('✅ Repo-wide update completed')
-}
-
-async function processFile(
-  relativePath: string,
-  userPrompt: string
-): Promise<void> {
+const processFile = async (relativePath, userPrompt) => {
   const fullPath = path.join(process.cwd(), relativePath)
   if (!fs.existsSync(fullPath)) return
 
@@ -79,4 +58,17 @@ ${original}
   }
 
   fs.writeFileSync(fullPath, updated, 'utf8')
+}
+
+export const runCodegen = async ({ prompt }) => {
+  console.log('📝 User prompt:', prompt)
+
+  const files = await findFiles(GLOBS)
+  console.log(`📂 Found ${files.length} files`)
+
+  for (const relativePath of files) {
+    await processFile(relativePath, prompt)
+  }
+
+  console.log('✅ Repo-wide update completed')
 }

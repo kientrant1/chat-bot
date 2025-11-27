@@ -26,13 +26,13 @@ jobs:
 
       - name: Install dependencies
         run: |
-          npm install openai@4 glob@10 ts-node typescript @types/node @types/glob
+          npm install @google/generative-ai openai@4 glob@10
 
       - name: Run generator with prompt
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           USER_PROMPT: ${{ github.event.inputs.prompt }}
-        run: npx ts-node scripts/ai-generator.ts
+        run: node scripts/ai-generator.js
 
       - name: Commit changes
         run: |

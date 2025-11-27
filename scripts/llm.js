@@ -1,22 +1,13 @@
-// import OpenAI from 'openai'
-import { GoogleGenerativeAI } from '@google/generative-ai'
+/* eslint-disable @typescript-eslint/no-require-imports */
+// const OpenAI = require('openai')
+const GeminiAI = require('@google/generative-ai')
 
-type GenerateParams = {
-  system: string
-  user: string
-}
-
-enum LLMProvider {
-  OpenAI = 'openai',
-  Gemini = 'gemini',
-}
-
-const provider = LLMProvider.Gemini.toString()
+const provider = 'gemini'
 
 /* const generateWithOpenAI = async ({
   system,
   user,
-}: GenerateParams): Promise<string> => {
+}) => {
   const apiKey = process.env.OPENAI_API_KEY
   if (!apiKey) throw new Error('OPENAI_API_KEY is not set')
 
@@ -38,23 +29,17 @@ const provider = LLMProvider.Gemini.toString()
   return content
 } */
 
-const generateWithGemini = async ({
-  system,
-  user,
-}: GenerateParams): Promise<string> => {
+const generateWithGemini = async ({ system, user }) => {
   const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) throw new Error('GEMINI_API_KEY is not set')
-  const genAI = new GoogleGenerativeAI(apiKey)
-  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' })
+  const genAI = new GeminiAI(apiKey)
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' })
 
   const res = await model.generateContent(`${system}\n\nUser:\n${user}`)
   return res.response.text()
 }
 
-export async function generate({
-  system,
-  user,
-}: GenerateParams): Promise<string> {
+export async function generate({ system, user }) {
   if (provider === LLMProvider.OpenAI) {
     // return generateWithOpenAI({ system, user })
     throw new Error(

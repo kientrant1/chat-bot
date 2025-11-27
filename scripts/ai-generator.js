@@ -1,5 +1,5 @@
-// scripts/generate.ts
-import { runCodegen } from './codegen'
+/* eslint-disable @typescript-eslint/no-require-imports */
+const { runCodegen } = require('./codegen')
 
 async function main() {
   const prompt =
