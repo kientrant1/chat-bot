@@ -6,7 +6,7 @@
 
 - Prefer colocation: if logic or components only serve a single route, keep them in that route folder; promote to `components/`, `utils/`, etc., only when reused.
 - Related Files Together: Keep files that change together in the same directory.
-- Path alias `@/*` points to repo root (see `tsconfig.json`); prefer these aliases over long relative paths.
+- Use path alias `@/*` points to root directory (see `tsconfig.json`); prefer these aliases rather than relative paths.
 - Consistent Structure: Maintain consistent folder structure across similar features
 - Shallow Nesting: Avoid deeply nested folder structures
 - Clear Separation: Separate concerns clearly (UI, logic, data, types)
