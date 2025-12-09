@@ -46,7 +46,7 @@
     "@tailwindcss/postcss": "^4",
     "@types/bcrypt": "^6",
     "@types/newrelic": "^9.14.8",
-    "@types/node": "^20",
+    "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
