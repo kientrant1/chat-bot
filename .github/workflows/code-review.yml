@@ -1,0 +1,133 @@
+name: AI Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:           # 👈 QUAN TRỌNG
+  contents: read
+  issues: write        # để tạo comment trên PR (PR là 1 loại "issue")
+  pull-requests: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install --upgrade openai requests
+
+      - name: AI Code Review + PR Comment
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python << 'EOF'
+          import os, subprocess, json, requests
+          from textwrap import dedent
+          from openai import OpenAI
+
+          api_key = os.environ.get("OPENAI_API_KEY")
+          if not api_key:
+              print("⚠️ Missing OPENAI_API_KEY → skip AI review.")
+              raise SystemExit(0)
+
+          client = OpenAI(api_key=api_key)
+
+          def get_diff():
+              base_ref = os.environ.get("GITHUB_BASE_REF")
+              if base_ref:
+                  subprocess.run(["git", "fetch", "origin", base_ref], check=False)
+                  remote = f"origin/{base_ref}"
+              else:
+                  remote = "HEAD^"
+              try:
+                  return subprocess.check_output(
+                      ["git", "diff", f"{remote}...HEAD"]
+                  ).decode("utf-8", errors="ignore")
+              except subprocess.CalledProcessError:
+                  return subprocess.check_output(
+                      ["git", "diff", "HEAD^...HEAD"]
+                  ).decode("utf-8", errors="ignore")
+
+          diff = get_diff()
+          if not diff.strip():
+              print("⚠️ No diff → skip review.")
+              raise SystemExit(0)
+
+          system_prompt = dedent("""
+          Bạn là một senior developer. Hãy review code diff dưới đây và:
+          - Tóm tắt thay đổi chính.
+          - Chỉ ra bug tiềm ẩn, smell, security risk.
+          - Đề xuất cải tiến (performance, readability, structure).
+          - Trả lời ngắn gọn và rõ ràng.
+          """)
+
+          user_prompt = f"Đây là diff của PR:\n\n```diff\n{diff}\n```"
+
+          try:
+              completion = client.chat.completions.create(
+                  model="gpt-4.1-mini",
+                  messages=[
+                      {"role": "system", "content": system_prompt},
+                      {"role": "user", "content": user_prompt},
+                  ],
+                  temperature=0.2,
+              )
+              review_text = completion.choices[0].message.content
+          except Exception as e:
+              msg = str(e)
+              if "insufficient_quota" in msg:
+                  print("⚠️ Hết quota OpenAI → bỏ qua review, không fail CI.")
+                  raise SystemExit(0)
+              raise
+
+          print("===== AI REVIEW TEXT =====")
+          print(review_text)
+
+          repo = os.environ["GITHUB_REPOSITORY"]
+          event_path = os.environ["GITHUB_EVENT_PATH"]
+          token = os.environ["GITHUB_TOKEN"]
+
+          with open(event_path, "r") as f:
+              event = json.load(f)
+
+          pr = event.get("pull_request") or {}
+          head_repo = pr.get("head", {}).get("repo", {}).get("full_name")
+          base_repo = pr.get("base", {}).get("repo", {}).get("full_name")
+          pr_number = event["number"]
+
+          # Nếu PR từ fork → thường không comment được với pull_request event
+          if head_repo and base_repo and head_repo != base_repo:
+              print(f"⚠️ PR từ fork ({head_repo} -> {base_repo}), bỏ qua comment để tránh 403.")
+              raise SystemExit(0)
+
+          url = f"https://api.github.com/repos/{repo}/issues/{pr_number}/comments"
+
+          headers = {
+              "Authorization": f"Bearer {token}",
+              "Accept": "application/vnd.github+json",
+          }
+
+          body = {
+              "body": f"## 🤖 AI Code Review (gpt-4.1-mini)\n\n{review_text}"
+          }
+
+          r = requests.post(url, headers=headers, json=body)
+          print("Status:", r.status_code)
+          print("Response:", r.text)
+          if r.status_code >= 300:
+              print("❌ Failed to post PR comment (có thể thiếu permission).")
+          else:
+              print("✅ Comment posted to PR successfully!")
+          EOF
